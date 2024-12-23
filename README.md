@@ -16,7 +16,7 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
 <dependency>
     <groupId>io.github.rururunu</groupId>
     <artifactId>MQTT-Macchiatto</artifactId>
-    <version>1.0</version>
+    <version>0.1</version>
 </dependency>
 ```
 #### 配置 to configure
