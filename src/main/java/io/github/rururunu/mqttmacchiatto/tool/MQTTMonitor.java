@@ -7,6 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 1.0
  */
+@EnableConfigurationProperties({MQTTBase.class})
 public class MQTTMonitor {
 
     private String clientId = UUID.randomUUID().toString();

@@ -3,6 +3,7 @@ package io.github.rururunu.mqttmacchiatto.tool;
 import io.github.rururunu.mqttmacchiatto.config.MQTTBase;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import java.util.UUID;
 
@@ -44,6 +45,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 1.0
  */
+@EnableConfigurationProperties({MQTTBase.class})
 public class MQTTReport {
 
     private String serviceId = UUID.randomUUID().toString();

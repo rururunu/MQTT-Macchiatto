@@ -32,7 +32,7 @@ mto-mqtt:
     # 密码
     password: nl@12345
     # 超时时间
-    tiemout: 10000
+    timeout: 10000
     # 心跳
     keepalive: 60
     # 重连间隔
