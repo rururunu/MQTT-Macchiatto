@@ -38,6 +38,13 @@ mto-mqtt:
     # 重连间隔
     reconnect-frequency-ms: 5000
 ```
+
+启动类上添加 Add to Startup Class
+```java
+@SpringBootApplication(scanBasePackages = {"io.github.rururunu"})
+```
+
+
 #### 监听 Monitor
 ```java
 MqttPut.of("rsp/")
