@@ -24,13 +24,13 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
 ```yaml
 mto-mqtt:
     # 主机
-    host: tcp://192.168.1.125:1883
+    host: tcp://${ip}:${port}
     # 端口
-    port: 1883
+    port: ${port}
     # 用户名
-    username: nuolong
+    username: ${username}
     # 密码
-    password: nl@12345
+    password: ${password}
     # 超时时间
     timeout: 10000
     # 心跳
