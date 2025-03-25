@@ -1,5 +1,6 @@
 package io.github.rururunu.mqttmacchiatto.tool;
 
+import io.github.rururunu.mqttmacchiatto.content.MQTTQos;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -26,6 +27,18 @@ import java.util.function.Consumer;
  *         mqttPut.start();
  *         mqttPut.stop();
  * }</pre>
+ * <pre>{@code
+ *         MqttPut.of("test/")
+ *                 .host("tcp://127.0.0.1:1883")
+ *                 .username("username")
+ *                 .password("password")
+ *                 .timeout(10000)
+ *                 .keepalive(60)
+ *                 .cleanSession(false)
+ *                 .reconnectFrequencyMs(5000)
+ *                 .response((topic, msg) -> System.out.println(topic + ":" + msg))
+ *                 .start();
+ * }</pre>
  *
  * @author rururunu
  * @version 1.0
@@ -51,6 +64,52 @@ public class MqttPut {
     public static MqttPut of(String topic) {
         return new MqttPut(topic);
     }
+
+    public MqttPut host(String host) {
+        monitor.host(host);
+        return this;
+    }
+
+    public MqttPut username(String username) {
+        monitor.username(username);
+        return this;
+    }
+
+    public MqttPut password(String password) {
+        monitor.password(password);
+        return this;
+    }
+
+    public MqttPut timeout(int timeout) {
+        monitor.timeout(timeout);
+        return this;
+    }
+
+    public MqttPut keepalive(int keepalive) {
+        monitor.keepalive(keepalive);
+        return this;
+    }
+
+    public MqttPut cleanSession(boolean cleanSession) {
+        monitor.setCleanSession(cleanSession);
+        return this;
+    }
+
+    public MqttPut reconnectFrequencyMs(int reconnectFrequencyMs) {
+        monitor.reconnectFrequencyMs(reconnectFrequencyMs);
+        return this;
+    }
+
+    public MqttPut qos(MQTTQos qos) {
+        monitor.setQos(qos);
+        return this;
+    }
+
+    public MqttPut clientId(String serviceId) {
+        monitor.setClientId(serviceId);
+        return this;
+    }
+
 
     public MqttPut setTopic(String topic) {
         this.topic = topic;

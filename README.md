@@ -16,7 +16,7 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
 <dependency>
     <groupId>io.github.rururunu</groupId>
     <artifactId>MQTT-Macchiatto</artifactId>
-    <version>0.1</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 #### 配置 to configure
@@ -25,8 +25,6 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
 mto-mqtt:
     # 主机
     host: tcp://${ip}:${port}
-    # 端口
-    port: ${port}
     # 用户名
     username: ${username}
     # 密码
@@ -99,6 +97,16 @@ mqttMonitor.start("topic");
 ```
 
 #### 上报 Report
+
+```java
+MqttPush mqttPush = new MqttPush();
+mqttPush.start();
+mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
+	(iMqttToken) -> System.out.println("success"),
+	(iMqttToken, throwable) -> System.out.println("failure")
+);
+```
+
 ```java
 // 创建连接
 // Create connection
@@ -130,6 +138,54 @@ mqttReport.publish("topic", message);
 ```
 
 ----
+
+#### 自定义主机监听 Custom host monitoring
+
+``` java
+MqttPut.of("test/")
+        .host("tcp://127.0.0.1:1883")
+        .username("username")
+        .password("password")
+        .timeout(10000)
+        .keepalive(60)
+        .cleanSession(false)
+        .reconnectFrequencyMs(5000)
+        .response((topic, msg) -> System.out.println(topic + ":" + msg))
+        .start();
+```
+
+#### 自定义主机上报 Custom host reporting
+
+```java
+// 初始化主机信息
+// Initialize host information
+MqttPush mqttPush = new MqttPush()
+                 .host("tcp://127.0.0.1:1883")
+                 .username("username")
+                 .password("password")
+                 .timeout(10000)
+                 .keepalive(60)
+                 .cleanSession(false)
+                 .reconnectFrequencyMs(5000);
+// 开启主机
+// Open the host
+mqttPush.start();
+// 创建主题 可以忽略这一步,若topic没有创建在调用 push方法时会自动创建一个 topic 的 MqttTopic 对象放入内存
+// found topic You can ignore this step. If the topic is not created,
+// an MqttTopic object for the topic will be automatically created and placed
+// in memory when calling the push method
+mqttPush.foundTopic("test/");
+// 上报消息
+// Report message
+mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
+                 (iMqttToken) -> System.out.println("success"),
+                 (iMqttToken, throwable) -> System.out.println("failure")
+);
+// 可以选择手动关闭
+MqttPush.stop();
+```
+
+
 
 鄙人是第一次造轮子,有问题的地方,还请多多指教
 

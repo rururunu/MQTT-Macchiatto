@@ -44,6 +44,80 @@ public class MQTTMonitor {
     private MqttCallback mqttCallback;
     private boolean cleanSession = false;
 
+    private String host = MQTTBase.HOST;
+    private String username = MQTTBase.USER_NAME;
+    private String password = MQTTBase.PASSWORD;
+    private Integer timeout = MQTTBase.TIMEOUT;
+    private Integer keepalive = MQTTBase.KEEP_ALIVE;
+    private Integer reconnectFrequencyMs = MQTTBase.RECONNECT_FREQUENCY_MS;
+
+    /**
+     * 连接 host 地址
+     * Connect to host address
+     *
+     * @param host host 地址 Host address
+     * @return this
+     */
+    public MQTTMonitor host(String host) {
+        this.host = host;
+        return this;
+    }
+
+    /**
+     * 用户名 username
+     *
+     * @param username 用户名
+     * @return this
+     */
+    public MQTTMonitor username(String username) {
+        this.username = username;
+        return this;
+    }
+
+    /**
+     * 密码 password
+     *
+     * @param password 密码
+     * @return this
+     */
+    public MQTTMonitor password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    /**
+     * 超时时间 timeout
+     *
+     * @param timeout 超时时间
+     * @return this
+     */
+    public MQTTMonitor timeout(Integer timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
+    /**
+     * 心跳检测时间 keepalive
+     *
+     * @param keepalive 心跳检测时间
+     * @return this
+     */
+    public MQTTMonitor keepalive(Integer keepalive) {
+        this.keepalive = keepalive;
+        return this;
+    }
+
+    /**
+     * 重连间隔时间 reconnectFrequencyMs
+     *
+     * @param reconnectFrequencyMs 重连间隔时间
+     * @return this
+     */
+    public MQTTMonitor reconnectFrequencyMs(Integer reconnectFrequencyMs) {
+        this.reconnectFrequencyMs = reconnectFrequencyMs;
+        return this;
+    }
+
     /**
      * <h3>Enable monitoring MQTT</h3>
      * <p>
@@ -57,13 +131,13 @@ public class MQTTMonitor {
     public void start(String topicStr) {
         try {
             this.topic = topicStr;
-            client = new MqttClient(MQTTBase.HOST, getClientId(), new MemoryPersistence());
+            client = new MqttClient(host, getClientId(), new MemoryPersistence());
             options = new MqttConnectOptions();
             options.setCleanSession(false);
-            options.setUserName(MQTTBase.USER_NAME);
-            options.setPassword(MQTTBase.PASSWORD.toCharArray());
-            options.setConnectionTimeout(MQTTBase.TIMEOUT);
-            options.setKeepAliveInterval(MQTTBase.KEEP_ALIVE);
+            options.setUserName(username);
+            options.setPassword(password.toCharArray());
+            options.setConnectionTimeout(timeout);
+            options.setKeepAliveInterval(keepalive);
             client.setCallback(mqttCallback);
             client.connect(options);
             int[] qos = {getQos().getValue()};
@@ -88,7 +162,7 @@ public class MQTTMonitor {
             try {
                 long sleepTime = System.currentTimeMillis();
                 while (!client.isConnected()) {
-                    if (System.currentTimeMillis() - sleepTime > MQTTBase.RECONNECT_FREQUENCY_MS) {
+                    if (System.currentTimeMillis() - sleepTime > reconnectFrequencyMs) {
                         try {
                             client.connect();
                             client.subscribe(topic);
