@@ -16,6 +16,11 @@ import java.util.function.Consumer;
  * <h3>向 MQTT 推送消息</h3>
  * <h3>Push messages to MQTT</h3>
  * <pre>{@code
+ *  MqttPush mqttPush = new MqttPush().init();
+ *  mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
+ * }
+ * </pre>
+ * <pre>{@code
  *   MqttPush mqttPush = new MqttPush();
  *   mqttPush.start();
  *   mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
@@ -24,6 +29,26 @@ import java.util.function.Consumer;
  *   );
  * }
  * </pre>
+ *
+ * <h3>自定义主机</h3>
+ *
+ * <pre>{@code
+ * MqttPush mqttPush = new MqttPush.builder()
+ *             .host("tcp://127.0.0.1:1883")
+ *             .username("username")
+ *             .password("password")
+ *             .timeout(10000)
+ *             .keepalive(60)
+ *             .cleanSession(false)
+ *             .build()
+ *             .init((e) -> {
+ *                 System.out.println("Mqtt Creation failed" + e);
+ *             });
+ * mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
+ *                 (iMqttToken) -> System.out.println("success"),
+ *                 (iMqttToken, throwable) -> System.out.println("failure")
+ *         );
+ * }</pre>
  * <pre>{@code
  *   MqttPush mqttPush = new MqttPush()
  *                 .host("tcp://127.0.0.1:1883")
@@ -31,8 +56,7 @@ import java.util.function.Consumer;
  *                 .password("password")
  *                 .timeout(10000)
  *                 .keepalive(60)
- *                 .cleanSession(false)
- *                 .reconnectFrequencyMs(5000);
+ *                 .cleanSession(false);
  *         mqttPush.start();
  *         mqttPush.foundTopic("test/");
  *         mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
@@ -51,16 +75,29 @@ public class MqttPush {
 
     private MqttClient client;
     private MqttConnectOptions options;
-    private Map<String, MqttTopic> topicMap = new HashMap<>();
+    private final Map<String, MqttTopic> topicMap = new HashMap<>();
 
     private String host = MQTTBase.HOST;
     private String username = MQTTBase.USER_NAME;
     private String password = MQTTBase.PASSWORD;
     private Integer timeout = MQTTBase.TIMEOUT;
     private Integer keepalive = MQTTBase.KEEP_ALIVE;
-    private Integer reconnectFrequencyMs = MQTTBase.RECONNECT_FREQUENCY_MS;
     private String serviceId = UUID.randomUUID().toString();
     private boolean cleanSession = false;
+
+    public MqttPush() {
+
+    }
+
+    public MqttPush(builder builder) {
+        this.host = builder.host;
+        this.username = builder.username;
+        this.password = builder.password;
+        this.timeout = builder.timeout;
+        this.keepalive = builder.keepalive;
+        this.serviceId = builder.serviceId;
+        this.cleanSession = builder.cleanSession;
+    }
 
     /**
      * 连接 host 地址
@@ -119,17 +156,6 @@ public class MqttPush {
     }
 
     /**
-     * 重连间隔时间 reconnectFrequencyMs
-     *
-     * @param reconnectFrequencyMs 重连间隔时间
-     * @return this
-     */
-    public MqttPush reconnectFrequencyMs(Integer reconnectFrequencyMs) {
-        this.reconnectFrequencyMs = reconnectFrequencyMs;
-        return this;
-    }
-
-    /**
      * 服务id serviceId
      *
      * @param serviceId 服务id
@@ -153,8 +179,6 @@ public class MqttPush {
 
     /**
      * 将配置初始化并开启连接 Initialize the configuration and open the connection
-     *
-     * @throws MqttException MqttException
      */
     public void start() throws MqttException {
         client = new MqttClient(host, serviceId, new MemoryPersistence());
@@ -165,6 +189,47 @@ public class MqttPush {
         options.setConnectionTimeout(timeout);
         options.setKeepAliveInterval(keepalive);
         client.connect(options);
+    }
+
+    /**
+     * 将配置初始化并开启连接 Initialize the configuration and open the connection
+     *
+     * @param error 错误回调
+     */
+    public MqttPush init(Consumer<Exception> error) {
+        try {
+            client = new MqttClient(host, serviceId, new MemoryPersistence());
+            options = new MqttConnectOptions();
+            options.setCleanSession(cleanSession);
+            options.setUserName(username);
+            options.setPassword(password.toCharArray());
+            options.setConnectionTimeout(timeout);
+            options.setKeepAliveInterval(keepalive);
+            client.connect(options);
+            return this;
+        } catch (Exception e) {
+            error.accept(e);
+            return this;
+        }
+    }
+
+    /**
+     * 将配置初始化并开启连接 Initialize the configuration and open the connection
+     */
+    public MqttPush init() {
+        try {
+            client = new MqttClient(host, serviceId, new MemoryPersistence());
+            options = new MqttConnectOptions();
+            options.setCleanSession(cleanSession);
+            options.setUserName(username);
+            options.setPassword(password.toCharArray());
+            options.setConnectionTimeout(timeout);
+            options.setKeepAliveInterval(keepalive);
+            client.connect(options);
+            return this;
+        } catch (Exception e) {
+            throw new RuntimeException("MQTT connection exception", e);
+        }
     }
 
     /**
@@ -242,6 +307,55 @@ public class MqttPush {
         client.disconnect();
     }
 
+    public static class builder {
+        private String host = MQTTBase.HOST;
+        private String username = MQTTBase.USER_NAME;
+        private String password = MQTTBase.PASSWORD;
+        private Integer timeout = MQTTBase.TIMEOUT;
+        private Integer keepalive = MQTTBase.KEEP_ALIVE;
+        private String serviceId = UUID.randomUUID().toString();
+        private boolean cleanSession = false;
+
+        public builder host(String host) {
+            this.host = host;
+            return this;
+        }
+
+        public builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public builder timeout(Integer timeout) {
+            this.timeout = timeout;
+            return this;
+        }
+
+        public builder keepalive(Integer keepalive) {
+            this.keepalive = keepalive;
+            return this;
+        }
+
+        public builder serviceId(String serviceId) {
+            this.serviceId = serviceId;
+            return this;
+        }
+
+        public builder cleanSession(boolean cleanSession) {
+            this.cleanSession = cleanSession;
+            return this;
+        }
+
+        public MqttPush build() {
+            return new MqttPush(this);
+        }
+    }
+
     public String getHost() {
         return host;
     }
@@ -280,14 +394,6 @@ public class MqttPush {
 
     public void setKeepalive(Integer keepalive) {
         this.keepalive = keepalive;
-    }
-
-    public Integer getReconnectFrequencyMs() {
-        return reconnectFrequencyMs;
-    }
-
-    public void setReconnectFrequencyMs(Integer reconnectFrequencyMs) {
-        this.reconnectFrequencyMs = reconnectFrequencyMs;
     }
 
     public String getServiceId() {

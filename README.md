@@ -16,10 +16,10 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
 <dependency>
     <groupId>io.github.rururunu</groupId>
     <artifactId>MQTT-Macchiatto</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ```
-#### 配置 to configure
+#### 📝 配置 to configure
 在 application.yml 中编写配置 Write configuration in application.yml:
 ```yaml
 mto-mqtt:
@@ -99,6 +99,11 @@ mqttMonitor.start("topic");
 #### 上报 Report
 
 ```java
+MqttPush mqttPush = new MqttPush().init();
+mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
+```
+
+```java
 MqttPush mqttPush = new MqttPush();
 mqttPush.start();
 mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
@@ -139,7 +144,17 @@ mqttReport.publish("topic", message);
 
 ----
 
-#### 自定义主机监听 Custom host monitoring
+### 🪢 自定义 MQTT 服务信息 
+
+
+
+如果可以通过其他方式获取MQTT 服务的信息，可以省略配置信息，直接通过构建MQTT 服务信息来进行消息的监听和上报，也可以通过创建多个对象来连接不同的 MQTT 服务
+
+
+
+If information about MQTT services can be obtained through other means, configuration information can be omitted and messages can be monitored and reported directly by building MQTT service information. Multiple objects can also be created to connect different MQTT services
+
+#### 自定义MQTT 服务监听 Custom host monitoring
 
 ``` java
 MqttPut.of("test/")
@@ -154,7 +169,31 @@ MqttPut.of("test/")
         .start();
 ```
 
-#### 自定义主机上报 Custom host reporting
+#### 自定义MQTT 服务上报 Custom host reporting
+
+```java
+// 使用 builder 初始化主机信息并使用 init 加载 
+// Initialize host information using builder and load it using init
+MqttPush mqttPush = new MqttPush.builder()
+            .host("tcp://127.0.0.1:1883")
+            .username("username")
+            .password("password")
+            .timeout(10000)
+            .keepalive(60)
+            .cleanSession(false)
+            .build()
+            .init((e) -> {
+                System.out.println("Mqtt Creation failed" + e);
+            });
+// 上报消息
+// Report message
+mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
+                (iMqttToken) -> System.out.println("success"),
+                (iMqttToken, throwable) -> System.out.println("failure")
+        );
+```
+
+或 or
 
 ```java
 // 初始化主机信息
