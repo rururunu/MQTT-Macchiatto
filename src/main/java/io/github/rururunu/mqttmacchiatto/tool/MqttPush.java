@@ -240,6 +240,7 @@ public class MqttPush {
      * @param topic 主题 Topic
      */
     public void foundTopic(String topic) {
+        this.ensure();
         topicMap.put(topic, client.getTopic(topic));
     }
 
@@ -252,6 +253,7 @@ public class MqttPush {
      * @throws MqttException MqttException
      */
     public void push(String topic, String message, MQTTQos qos) throws MqttException {
+        this.ensure();
         if (!topicMap.containsKey(topic)) {
             topicMap.put(topic, client.getTopic(topic));
         }
@@ -278,6 +280,7 @@ public class MqttPush {
             Consumer<IMqttToken> success,
             BiConsumer<IMqttToken, Throwable> failure
     ) throws MqttException {
+        this.ensure();
         if (!topicMap.containsKey(topic)) {
             topicMap.put(topic, client.getTopic(topic));
         }
@@ -305,6 +308,31 @@ public class MqttPush {
      */
     public void stop() throws MqttException {
         client.disconnect();
+    }
+
+    public void ensure() {
+        if (this.host == null || this.host.isEmpty()) {
+            this.host = MQTTBase.HOST;
+        }
+        if (this.username == null || this.username.isEmpty()) {
+            this.username = MQTTBase.USER_NAME;
+        }
+        if (this.password == null || this.password.isEmpty()) {
+            this.password = MQTTBase.PASSWORD;
+        }
+        if (this.timeout == null) {
+            this.timeout = MQTTBase.TIMEOUT;
+        }
+        if (this.keepalive == null) {
+            this.keepalive = MQTTBase.KEEP_ALIVE;
+        }
+        if (this.client == null || this.options == null) {
+            try {
+                this.start();
+            } catch (MqttException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public static class builder {

@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.rururunu</groupId>
     <artifactId>MQTT-Macchiatto</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <name>MQTT-Macchiatto</name>
     <description>MQTT-Macchiatto</description>
     <url>https://github.com/rururunu/MQTT-Macchiatto</url>

@@ -16,7 +16,7 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
 <dependency>
     <groupId>io.github.rururunu</groupId>
     <artifactId>MQTT-Macchiatto</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 #### 📝 配置 to configure
@@ -99,10 +99,10 @@ mqttMonitor.start("topic");
 #### 上报 Report
 
 ```java
-MqttPush mqttPush = new MqttPush().init();
+MqttPush mqttPush = new MqttPush();
 mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
 ```
-
+或 or
 ```java
 MqttPush mqttPush = new MqttPush();
 mqttPush.start();
@@ -111,6 +111,8 @@ mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
 	(iMqttToken, throwable) -> System.out.println("failure")
 );
 ```
+
+或 or
 
 ```java
 // 创建连接
@@ -126,7 +128,9 @@ mqttReport.getMessage().setQos(MQTTQos.EXACTLY_ONCE.getValue());
 mqttReport.getMessage().setPayload("hello".getBytes());
 mqttReport.publish(mqttReport.getMqttTopic(), mqttReport.getMessage());
 ```
+
 或 or
+
 ```java
 // 创建连接
 // Create connection
