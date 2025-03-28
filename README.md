@@ -146,6 +146,23 @@ message.setPayload("hello".getBytes());
 mqttReport.publish("topic", message);
 ```
 
+> 如果您需要长连接请勿将 new MqttPush 的代码写入在每次都需要推送的方法中。可以在 class 中创建 MqttPush 的对象，若您使用的是配置文件连接请勿调用 MqttPush().init() 在第一次推送时会自动调用 init(), 因为在一开始创建时无法获取到 yml 中的数据; 如下所示:
+
+
+>  If you need a long connection, please do not write the code for new MqttPush into the method that needs to be pushed every time. You can create MqttPush objects in the class. If you are using a configuration file connection, do not call MqttPush(). init(). During the first push, init() will be automatically called because the data in yml cannot be obtained at the beginning of creation; As shown below:
+
+
+```java
+class MqttMacchiatto {
+
+	private MqttPush mqttPush = new MqttPush();
+
+	public void push() {
+		mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
+	}
+}
+```
+
 ----
 
 ### 🪢 自定义 MQTT 服务信息 
