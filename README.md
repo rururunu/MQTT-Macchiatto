@@ -1,17 +1,26 @@
-# MQTT Macchiatto
-----
+![ChatGPT Image 2025年5月23日 16_45_26](https://github.com/user-attachments/assets/55987aad-0e91-4c4b-982f-3162a5c3c47c)
+# ☕ MQTT Macchiatto
+> ☁️ Spring Boot 下优雅的 MQTT 消息通信封装工具，让你的开发像一杯玛奇朵一样顺滑。
 
-服务于Spring Boot 的 MQTT 快捷封装, 帮你快速编写 接收/发布消息 的代码
+[📦GitHub](https://github.com/rururunu/MQTT-Macchiatto) | [🔗Gitee](https://gitee.com/guolvaita/mqtt-macchiatto)
+<br/>
+<br/>
+<br/>
 
-MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to receive/publish messages
+## ✨ 项目亮点 Highlights
+* 🚀 快速集成：仅需几行配置即可启动 MQTT 通信。
+* 🧩 高度封装：屏蔽繁琐 API 调用，简洁明了。
+* 🔌 灵活扩展：支持自定义多服务连接、手动配置。
+* 💡 支持异常重连机制：让连接更加稳定可靠。
+<br/>
+<br/>
+<br/>
 
+## 🧃 快速开始 Quick Start
+<br/>
+<br/>
 
-[GitHub](https://github.com/rururunu/MQTT-Macchiatto) | [Gitee](https://gitee.com/guolvaita/mqtt-macchiatto)
-
-
-### 快速开始 Quick Start
-
-#### 在 pom.xml 中引入我们 Introduce us in pom.xml
+### 1. 添加依赖
 ```xml
 <dependency>
     <groupId>io.github.rururunu</groupId>
@@ -19,16 +28,18 @@ MQTT Quick Encapsulation for Spring Boot, helping you quickly write code to rece
     <version>0.1.3</version>
 </dependency>
 ```
-#### 📝 配置 to configure
+<br/>
+
+### 2. 配置 application.yml
 在 application.yml 中编写配置 Write configuration in application.yml:
 ```yaml
 mto-mqtt:
     # 主机
-    host: tcp://${ip}:${port}
+    host: tcp://your-host:1883
     # 用户名
-    username: ${username}
+    username: your-username
     # 密码
-    password: ${password}
+    password: your-password
     # 超时时间
     timeout: 10000
     # 心跳
@@ -36,14 +47,15 @@ mto-mqtt:
     # 重连间隔
     reconnect-frequency-ms: 5000
 ```
+<br/>
 
-启动类上添加 Add to Startup Class
+### 3. 启动类配置
 ```java
-@SpringBootApplication(scanBasePackages = {"io.github.rururunu"})
+@SpringBootApplication(scanBasePackages = {"Your project path","io.github.rururunu"})
 ```
+<br/>
 
-
-#### 监听 Monitor
+## 📥 接收消息 - Listen
 ```java
 MqttPut.of("rsp/")
     .response((topic, message) -> {
@@ -52,7 +64,33 @@ MqttPut.of("rsp/")
         System.out.println("topic:" + topic + "message:" + message);
     }).start();
 ```
-或 or
+<br/>
+<br/>
+
+## 📤 发布消息 - Publish
+```java
+MqttPush mqttPush = new MqttPush();
+mqttPush.push("your/topic", "Hello MQTT", MQTTQos.AT_LEAST_ONCE);
+```
+或者带回调
+```java
+mqttPush.push("your/topic", "Message", MQTTQos.AT_LEAST_ONCE,
+    token -> System.out.println("Sent successfully"),
+    (token, throwable) -> System.err.println("Send failed")
+);
+```
+<br/>
+<br/>
+<br/>
+
+## 🧪 高级用法 Advanced Usage
+* ✅ 支持构建多个 MQTT 客户端连接多个服务
+
+* 🔒 支持 CleanSession、Qos 等完整参数配置
+
+* 🔄 支持断线重连（reconnect()）
+
+### 📥 接收消息其他示例- Listen
 ```java
 MqttPut.of()
     .setTopic("topic")
@@ -64,7 +102,7 @@ MqttPut.of()
     })
     .start();
 ```
-或 or
+使用MQTTMonitor对象
 ```java
 MQTTMonitor mqttMonitor = new MQTTMonitor();
 mqttMonitor.setClientId("clientId");
@@ -95,25 +133,22 @@ mqttMonitor.setMqttCallback(new MqttCallback() {
 //Activate subscription
 mqttMonitor.start("topic");
 ```
-
-#### 上报 Report
-
-```java
-MqttPush mqttPush = new MqttPush();
-mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
-```
-或 or
-```java
-MqttPush mqttPush = new MqttPush();
-mqttPush.start();
-mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
-	(iMqttToken) -> System.out.println("success"),
-	(iMqttToken, throwable) -> System.out.println("failure")
-);
+自定义服务
+``` java
+MqttPut.of("test/")
+        .host("tcp://127.0.0.1:1883")
+        .username("username")
+        .password("password")
+        .timeout(10000)
+        .keepalive(60)
+        .cleanSession(false)
+        .reconnectFrequencyMs(5000)
+        .response((topic, msg) -> System.out.println(topic + ":" + msg))
+        .start();
 ```
 
-或 or
-
+### 📤 发布消息其他示例 - Publish
+使用 MQTTReport 连接
 ```java
 // 创建连接
 // Create connection
@@ -128,9 +163,7 @@ mqttReport.getMessage().setQos(MQTTQos.EXACTLY_ONCE.getValue());
 mqttReport.getMessage().setPayload("hello".getBytes());
 mqttReport.publish(mqttReport.getMqttTopic(), mqttReport.getMessage());
 ```
-
-或 or
-
+使用 MqttMessage 构建信息
 ```java
 // 创建连接
 // Create connection
@@ -145,53 +178,7 @@ message.setQos(MQTTQos.EXACTLY_ONCE.getValue());
 message.setPayload("hello".getBytes());
 mqttReport.publish("topic", message);
 ```
-
-> 如果您需要长连接请勿将 new MqttPush 的代码写入在每次都需要推送的方法中。可以在 class 中创建 MqttPush 的对象，若您使用的是配置文件连接请勿调用 MqttPush().init() 在第一次推送时会自动调用 init(), 因为在一开始创建时无法获取到 yml 中的数据; 如下所示:
-
-
->  If you need a long connection, please do not write the code for new MqttPush into the method that needs to be pushed every time. You can create MqttPush objects in the class. If you are using a configuration file connection, do not call MqttPush(). init(). During the first push, init() will be automatically called because the data in yml cannot be obtained at the beginning of creation; As shown below:
-
-
-```java
-class MqttMacchiatto {
-
-	private MqttPush mqttPush = new MqttPush();
-
-	public void push() {
-		mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
-	}
-}
-```
-
-----
-
-### 🪢 自定义 MQTT 服务信息 
-
-
-
-如果可以通过其他方式获取MQTT 服务的信息，可以省略配置信息，直接通过构建MQTT 服务信息来进行消息的监听和上报，也可以通过创建多个对象来连接不同的 MQTT 服务
-
-
-
-If information about MQTT services can be obtained through other means, configuration information can be omitted and messages can be monitored and reported directly by building MQTT service information. Multiple objects can also be created to connect different MQTT services
-
-#### 自定义MQTT 服务监听 Custom host monitoring
-
-``` java
-MqttPut.of("test/")
-        .host("tcp://127.0.0.1:1883")
-        .username("username")
-        .password("password")
-        .timeout(10000)
-        .keepalive(60)
-        .cleanSession(false)
-        .reconnectFrequencyMs(5000)
-        .response((topic, msg) -> System.out.println(topic + ":" + msg))
-        .start();
-```
-
-#### 自定义MQTT 服务上报 Custom host reporting
-
+自定义服务
 ```java
 // 使用 builder 初始化主机信息并使用 init 加载 
 // Initialize host information using builder and load it using init
@@ -245,28 +232,53 @@ mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
 MqttPush.stop();
 ```
 
+### 📤 发布消息长连接
 
 
-鄙人是第一次造轮子,有问题的地方,还请多多指教
+```java
+class MqttMacchiatto {
 
-如果可以帮助到您希望您能献出宝贵的🌟Star🫶感谢
+	private MqttPush mqttPush = new MqttPush();
 
-This is my first time making wheels. If there are any issues, please advise me
+	public void push() {
+		mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE);
+	}
+}
+```
+<br/>
+<br/>
+<br/>
 
-If it can help you, I hope you can contribute your valuable resources 🌟 Star 🫶 Thank you
+## 🧠 为什么选择 MQTT Macchiatto？
+### 📚 Spring Boot 项目中，使用原生 MQTT 往往意味着：
 
+* 多层回调配置
 
-联系我:
+* 错误处理繁琐
 
-邮箱: guolvaita@gmail.com
+* 多服务连接困难
 
-微信: AfterTheMoonlight
+### 而 MQTT Macchiatto 提供：
 
+* ☕ 一行配置连接服务
 
+* ☕ 高度封装的发布和订阅工具类
 
-Contact me:
+* ☕ 更清晰的代码组织和响应方式
 
-Email: guolvaita@gmail.com
+<br/>
+<br/>
+<br/>
 
-WeChat: AfterTheMoonlight
+## 💬 联系我 Contact
+如有建议、问题或合作意向，欢迎联系：
 
+* 📧 Email: guolvaita@gmail.com
+
+* 💬 WeChat: AfterTheMoonlight
+<br/>
+<br/>
+<br/>
+
+## 🌟 Star 支持 Support Me
+如果你觉得这个项目对你有帮助，请不要吝啬点一个 🌟 Star，这是我持续优化的最大动力！
