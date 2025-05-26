@@ -1,9 +1,9 @@
 ![ChatGPT Image 2025年5月23日 16_45_26](https://github.com/user-attachments/assets/55987aad-0e91-4c4b-982f-3162a5c3c47c)
 # ☕ MQTT Macchiatto
-> ☁️ A graceful MQTT messaging encapsulation tool for Spring Boot, as smooth as a cup of macchiato.
+> ☁️ Spring Boot 下优雅的 MQTT 消息通信封装工具，让你的开发像一杯玛奇朵一样顺滑。
 
-[📦GitHub](https://github.com/rururunu/MQTT-Macchiatto) | [🔗Gitee](https://gitee.com/guolvaita/mqtt-macchiatto) | 📖 [中文文档](./README_ZH.md)
-<br>
+[📦GitHub](https://github.com/rururunu/MQTT-Macchiatto) | [🔗Gitee](https://gitee.com/guolvaita/mqtt-macchiatto)
+<br/>
 
 
 
@@ -11,25 +11,23 @@
 ![License](https://img.shields.io/github/license/rururunu/MQTT-Macchiatto)
 ![Stars](https://img.shields.io/github/stars/rururunu/MQTT-Macchiatto?style=social)
 
-<br>
-<br>
+<br/>
+<br/>
 
+## ✨ 项目亮点 Highlights
+* 🚀 快速集成：仅需几行配置即可启动 MQTT 通信。
+* 🧩 高度封装：屏蔽繁琐 API 调用，简洁明了。
+* 🔌 灵活扩展：支持自定义多服务连接、手动配置。
+* 💡 支持异常重连机制：让连接更加稳定可靠。
+  <br/>
+  <br/>
+  <br/>
 
-## ✨ Highlights
+## 🧃 快速开始 Quick Start
+<br/>
+<br/>
 
-* 🚀 Quick Integration: Start MQTT communication with just a few lines of configuration.
-* 🧩 High Abstraction: Hide complex API calls with a clean and clear interface.
-* 🔌 Flexible Extension: Supports multiple service connections and manual configuration.
-* 💡 Auto Reconnection: Built-in reconnect mechanism for better stability.
-  <br>
-  <br>
-  <br>
-
-## 🧃 Quick Start
-<br>
-<br>
-
-### 1. Add Dependency
+### 1. 添加依赖
 ```xml
 <dependency>
     <groupId>io.github.rururunu</groupId>
@@ -37,72 +35,81 @@
     <version>0.1.3</version>
 </dependency>
 ```
-<br>
+<br/>
 
-### 2. Configure application.yml
+### 2. 配置 application.yml
+在 application.yml 中编写配置 Write configuration in application.yml:
 ```yaml
 mto-mqtt:
+    # 主机
     host: tcp://your-host:1883
+    # 用户名
     username: your-username
+    # 密码
     password: your-password
+    # 超时时间
     timeout: 10000
+    # 心跳
     keepalive: 60
+    # 重连间隔
     reconnect-frequency-ms: 5000
 ```
-<br>
+<br/>
 
-### 3. Configure Main Class
+### 3. 启动类配置
 ```java
 @SpringBootApplication(scanBasePackages = {"Your project path","io.github.rururunu"})
 ```
-<br>
+<br/>
 
-## 📥 Listen to Messages
+## 📥 接收消息 - Listen
 ```java
 MqttPut.of("rsp/")
     .response((topic, message) -> {
+        // 在这里编写收到消息的响应操作
         // Write the response operation for receiving messages here
         System.out.println("topic:" + topic + "message:" + message);
     }).start();
 ```
-<br>
-<br>
+<br/>
+<br/>
 
-## 📤 Publish Messages
+## 📤 发布消息 - Publish
 ```java
 MqttPush mqttPush = new MqttPush();
 mqttPush.push("your/topic", "Hello MQTT", MQTTQos.AT_LEAST_ONCE);
 ```
-With callback:
+或者带回调
 ```java
 mqttPush.push("your/topic", "Message", MQTTQos.AT_LEAST_ONCE,
     token -> System.out.println("Sent successfully"),
     (token, throwable) -> System.err.println("Send failed")
 );
 ```
-<br>
-<br>
-<br>
+<br/>
+<br/>
+<br/>
 
-## 🧪 Advanced Usage
-* ✅ Multiple MQTT client instances for different services
+## 🧪 高级用法 Advanced Usage
+* ✅ 支持构建多个 MQTT 客户端连接多个服务
 
-* 🔒 Support full configuration like CleanSession, Qos
+* 🔒 支持 CleanSession、Qos 等完整参数配置
 
-* 🔄 Built-in reconnect mechanism (reconnect())
+* 🔄 支持断线重连（reconnect()）
 
-### 📥 Other Message Listening Examples
+### 📥 接收消息其他示例- Listen
 ```java
 MqttPut.of()
     .setTopic("topic")
     .setServiceId("serviceId")
     .setCleanSession(true)
     .response((message) -> {
+        // 在这里编写收到消息的响应操作
         // Write the response operation for receiving messages here
     })
     .start();
 ```
-Using MQTTMonitor:
+使用MQTTMonitor对象
 ```java
 MQTTMonitor mqttMonitor = new MQTTMonitor();
 mqttMonitor.setClientId("clientId");
@@ -111,13 +118,16 @@ mqttMonitor.setQos(MQTTQos.EXACTLY_ONCE);
 mqttMonitor.setMqttCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable throwable) {
+                    // 编写异常断开的代码
                     // Write code for abnormal disconnection
+                    // 可以直接使用封装好的 mqttMonitor.reconnect();
                     // You can directly use the packaged product
                     mqttMonitor.reconnect();
                 }
 
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+                           // 在这里编写收到消息的响应操作
                            // Write the response operation for receiving messages here
                 }
 
@@ -126,10 +136,11 @@ mqttMonitor.setMqttCallback(new MqttCallback() {
 
                 }
 });
+// 开启订阅
 //Activate subscription
 mqttMonitor.start("topic");
 ```
-Custom service:
+自定义服务
 ``` java
 MqttPut.of("test/")
         .host("tcp://127.0.0.1:1883")
@@ -143,35 +154,40 @@ MqttPut.of("test/")
         .start();
 ```
 
-### 📤 Other Message Publishing Examples
-Using MQTTReport:
+### 📤 发布消息其他示例 - Publish
+使用 MQTTReport 连接
 ```java
+// 创建连接
 // Create connection
 MQTTReport mqttReport = new MQTTReport();
 mqttReport.setTopic("topic");
 mqttReport.setServiceId("serviceId");
 mqttReport.setCleanSession(false);
 mqttReport.start();
+// 发送消息
 // send message
 mqttReport.getMessage().setQos(MQTTQos.EXACTLY_ONCE.getValue());
 mqttReport.getMessage().setPayload("hello".getBytes());
 mqttReport.publish(mqttReport.getMqttTopic(), mqttReport.getMessage());
 ```
-Using MqttMessage:
+使用 MqttMessage 构建信息
 ```java
+// 创建连接
 // Create connection
 MQTTReport mqttReport = new MQTTReport();
 mqttReport.setTopic("topic");
 mqttReport.setServiceId("serviceId");
 mqttReport.start();
+// 发送消息
 // Create connection
 MqttMessage message = new MqttMessage();
 message.setQos(MQTTQos.EXACTLY_ONCE.getValue());
 message.setPayload("hello".getBytes());
 mqttReport.publish("topic", message);
 ```
-Custom connection with builder:
+自定义服务
 ```java
+// 使用 builder 初始化主机信息并使用 init 加载 
 // Initialize host information using builder and load it using init
 MqttPush mqttPush = new MqttPush.builder()
             .host("tcp://127.0.0.1:1883")
@@ -184,6 +200,7 @@ MqttPush mqttPush = new MqttPush.builder()
             .init((e) -> {
                 System.out.println("Mqtt Creation failed" + e);
             });
+// 上报消息
 // Report message
 mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
                 (iMqttToken) -> System.out.println("success"),
@@ -191,9 +208,10 @@ mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
         );
 ```
 
-Or simple initialization:
+或 or
 
 ```java
+// 初始化主机信息
 // Initialize host information
 MqttPush mqttPush = new MqttPush()
                  .host("tcp://127.0.0.1:1883")
@@ -203,21 +221,25 @@ MqttPush mqttPush = new MqttPush()
                  .keepalive(60)
                  .cleanSession(false)
                  .reconnectFrequencyMs(5000);
+// 开启主机
 // Open the host
 mqttPush.start();
+// 创建主题 可以忽略这一步,若topic没有创建在调用 push方法时会自动创建一个 topic 的 MqttTopic 对象放入内存
 // found topic You can ignore this step. If the topic is not created,
 // an MqttTopic object for the topic will be automatically created and placed
 // in memory when calling the push method
 mqttPush.foundTopic("test/");
+// 上报消息
 // Report message
 mqttPush.push("test/", "test", MQTTQos.AT_LEAST_ONCE,
                  (iMqttToken) -> System.out.println("success"),
                  (iMqttToken, throwable) -> System.out.println("failure")
 );
+// 可以选择手动关闭
 MqttPush.stop();
 ```
 
-### 📤 Long Connection Publishing
+### 📤 发布消息长连接
 
 
 ```java
@@ -230,40 +252,40 @@ class MqttMacchiatto {
 	}
 }
 ```
-<br>
-<br>
-<br>
+<br/>
+<br/>
+<br/>
 
-## 🧠 Why Choose MQTT Macchiatto?
-### 📚 Using raw MQTT in Spring Boot often means:
+## 🧠 为什么选择 MQTT Macchiatto？
+### 📚 Spring Boot 项目中，使用原生 MQTT 往往意味着：
 
-* Multiple levels of callback configuration
+* 多层回调配置
 
-* Tedious error handling
+* 错误处理繁琐
 
-* Difficult multi-service connection management
+* 多服务连接困难
 
-### But MQTT Macchiatto offers:
+### 而 MQTT Macchiatto 提供：
 
-* ☕ One-line connection setup
+* ☕ 一行配置连接服务
 
-* ☕ Fully encapsulated publishing/subscribing utility classes
+* ☕ 高度封装的发布和订阅工具类
 
-* ☕ Clearer code structure and response handling
+* ☕ 更清晰的代码组织和响应方式
 
-<br>
-<br>
-<br>
+<br/>
+<br/>
+<br/>
 
-## 💬 Contact
-For suggestions, issues, or collaboration:
+## 💬 联系我 Contact
+如有建议、问题或合作意向，欢迎联系：
 
 * 📧 Email: guolvaita@gmail.com
 
 * 💬 WeChat: AfterTheMoonlight
-  <br>
-  <br>
-  <br>
+  <br/>
+  <br/>
+  <br/>
 
-## 🌟 Support Me
-If you find this project helpful, consider giving it a 🌟 Star. It's my biggest motivation to keep improving!
+## 🌟 Star 支持 Support Me
+如果你觉得这个项目对你有帮助，请不要吝啬点一个 🌟 Star，这是我持续优化的最大动力！
