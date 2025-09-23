@@ -1,0 +1,196 @@
+{
+  "zh": {
+    "title": "MQTT Macchiatto - 优雅的Spring Boot MQTT封装工具",
+    "nav": {
+      "home": "首页",
+      "features": "特性",
+      "quickstart": "快速开始",
+      "examples": "代码示例",
+      "contact": "联系"
+    },
+    "hero": {
+      "subtitle": "Spring Boot 下优雅的 MQTT 消息通信封装工具",
+      "description": "让你的开发像一杯玛奇朵一样顺滑",
+      "quickstart": "快速开始",
+      "docs": "使用文档"
+    },
+    "features": {
+      "title": "为什么选择 MQTT Macchiatto？",
+      "fast": {
+        "title": "快速集成",
+        "desc": "仅需几行配置即可启动 MQTT 通信，告别繁琐的样板代码"
+      },
+      "encapsulation": {
+        "title": "高度封装",
+        "desc": "屏蔽复杂的 API 调用，提供简洁明了的接口设计"
+      },
+      "flexible": {
+        "title": "灵活扩展",
+        "desc": "支持多服务连接和手动配置，满足各种复杂场景"
+      },
+      "reconnect": {
+        "title": "自动重连",
+        "desc": "内置断线重连机制，让连接更加稳定可靠"
+      },
+      "comparison": {
+        "native": "使用原生 MQTT 😰",
+        "macchiatto": "使用 MQTT Macchiatto 😊",
+        "native_issues": [
+          "多层回调配置",
+          "错误处理繁琐",
+          "多服务连接困难",
+          "代码冗余复杂"
+        ],
+        "macchiatto_benefits": [
+          "一行配置连接服务",
+          "高度封装的工具类",
+          "清晰的代码组织",
+          "优雅的响应处理"
+        ]
+      }
+    },
+    "quickstart": {
+      "title": "快速开始",
+      "step1": {
+        "title": "添加依赖",
+        "desc": "在 pom.xml 中添加 Maven 依赖"
+      },
+      "step2": {
+        "title": "配置 application.yml",
+        "desc": "配置 MQTT 连接信息"
+      },
+      "step3": {
+        "title": "启动类配置",
+        "desc": "添加包扫描配置"
+      }
+    },
+    "examples": {
+      "title": "优秀代码示例",
+      "tabs": {
+        "listen": "消息监听",
+        "publish": "消息发布",
+        "advanced": "高级用法"
+      },
+      "listen_title": "消息监听 - 简洁优雅",
+      "publish_title": "消息发布 - 功能强大",
+      "advanced_title": "高级用法 - 企业级特性"
+    },
+    "contact": {
+      "title": "联系我",
+      "email": "邮箱",
+      "wechat": "微信",
+      "github": "GitHub",
+      "support": {
+        "title": "支持项目",
+        "desc": "如果你觉得这个项目对你有帮助，请不要吝啬点一个 ⭐ Star，这是我持续优化的最大动力！",
+        "button": "给个 Star"
+      }
+    },
+    "footer": {
+      "slogan": "让 MQTT 开发像一杯玛奇朵一样顺滑",
+      "links": "项目链接",
+      "docs": "文档",
+      "quickstart": "快速开始",
+      "examples": "代码示例",
+      "chinese_docs": "中文文档",
+      "copyright": "© 2024 MQTT Macchiatto. Licensed under Apache License 2.0"
+    }
+  },
+  "en": {
+    "title": "MQTT Macchiatto - Elegant MQTT Wrapper for Spring Boot",
+    "nav": {
+      "home": "Home",
+      "features": "Features",
+      "quickstart": "Quick Start",
+      "examples": "Examples",
+      "contact": "Contact"
+    },
+    "hero": {
+      "subtitle": "Elegant MQTT message communication wrapper for Spring Boot",
+      "description": "Make your development as smooth as a macchiatto",
+      "quickstart": "Quick Start",
+      "docs": "Documentation"
+    },
+    "features": {
+      "title": "Why Choose MQTT Macchiatto?",
+      "fast": {
+        "title": "Quick Integration",
+        "desc": "Start MQTT communication with just a few lines of configuration, say goodbye to tedious boilerplate code"
+      },
+      "encapsulation": {
+        "title": "High-level Encapsulation",
+        "desc": "Shield complex API calls and provide clean, intuitive interface design"
+      },
+      "flexible": {
+        "title": "Flexible Extension",
+        "desc": "Support multiple service connections and manual configuration to meet various complex scenarios"
+      },
+      "reconnect": {
+        "title": "Auto Reconnection",
+        "desc": "Built-in disconnection reconnection mechanism for more stable and reliable connections"
+      },
+      "comparison": {
+        "native": "Using Native MQTT 😰",
+        "macchiatto": "Using MQTT Macchiatto 😊",
+        "native_issues": [
+          "Multi-layer callback configuration",
+          "Tedious error handling",
+          "Difficult multi-service connections",
+          "Redundant and complex code"
+        ],
+        "macchiatto_benefits": [
+          "One-line configuration for service connection",
+          "Highly encapsulated utility classes",
+          "Clear code organization",
+          "Elegant response handling"
+        ]
+      }
+    },
+    "quickstart": {
+      "title": "Quick Start",
+      "step1": {
+        "title": "Add Dependency",
+        "desc": "Add Maven dependency in pom.xml"
+      },
+      "step2": {
+        "title": "Configure application.yml",
+        "desc": "Configure MQTT connection information"
+      },
+      "step3": {
+        "title": "Application Class Configuration",
+        "desc": "Add package scanning configuration"
+      }
+    },
+    "examples": {
+      "title": "Excellent Code Examples",
+      "tabs": {
+        "listen": "Message Listening",
+        "publish": "Message Publishing",
+        "advanced": "Advanced Usage"
+      },
+      "listen_title": "Message Listening - Clean and Elegant",
+      "publish_title": "Message Publishing - Powerful Features",
+      "advanced_title": "Advanced Usage - Enterprise Features"
+    },
+    "contact": {
+      "title": "Contact Me",
+      "email": "Email",
+      "wechat": "WeChat",
+      "github": "GitHub",
+      "support": {
+        "title": "Support Project",
+        "desc": "If you find this project helpful, please don't hesitate to give it a ⭐ Star, it's my greatest motivation to keep improving!",
+        "button": "Give a Star"
+      }
+    },
+    "footer": {
+      "slogan": "Make MQTT development as smooth as a macchiatto",
+      "links": "Project Links",
+      "docs": "Documentation",
+      "quickstart": "Quick Start",
+      "examples": "Code Examples",
+      "chinese_docs": "Chinese Docs",
+      "copyright": "© 2024 MQTT Macchiatto. Licensed under Apache License 2.0"
+    }
+  }
+}

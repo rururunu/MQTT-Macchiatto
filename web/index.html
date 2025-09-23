@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Macchiatto - 优雅的Spring Boot MQTT封装工具</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Prism.js 语法高亮 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="MQTT-Macchiatto-Logo.svg" alt="MQTT Macchiatto Logo" class="logo-image">
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" data-i18n="nav.home">首页</a></li>
+                <li><a href="#features" data-i18n="nav.features">特性</a></li>
+                <li><a href="#quickstart" data-i18n="nav.quickstart">快速开始</a></li>
+                <li><a href="#examples" data-i18n="nav.examples">代码示例</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">联系</a></li>
+            </ul>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="en">English</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主页面 -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-title">
+                    <img src="MQTT-Macchiatto-Logo.svg" alt="MQTT Macchiatto Logo" class="hero-logo">
+                    <div class="hero-text">
+                        <h1 class="hero-main-title">MQTT Macchiatto</h1>
+                        <p class="hero-subtitle" data-i18n="hero.subtitle">Spring Boot 下优雅的 MQTT 消息通信封装工具</p>
+                    </div>
+                </div>
+                <p class="hero-description" data-i18n="hero.description">让你的开发像一杯玛奇朵一样顺滑</p>
+
+                <div class="hero-badges">
+                    <img src="https://img.shields.io/maven-central/v/io.github.rururunu/MQTT-Macchiatto"
+                        alt="Maven Central">
+                    <img src="https://img.shields.io/github/license/rururunu/MQTT-Macchiatto" alt="License">
+                    <img src="https://img.shields.io/github/stars/rururunu/MQTT-Macchiatto?style=social" alt="Stars">
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="#quickstart" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        <span data-i18n="hero.quickstart">快速开始</span>
+                    </a>
+                    <a href="docs.html" class="btn btn-secondary">
+                        <i class="fas fa-book"></i>
+                        <span data-i18n="hero.docs">使用文档</span>
+                    </a>
+                    <a href="https://github.com/rururunu/MQTT-Macchiatto" class="btn btn-secondary">
+                        <i class="fab fa-github"></i>
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-code">
+                <div class="code-window">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="code-title">MqttExample.java</span>
+                    </div>
+                    <div class="code-content">
+                        <pre class="line-numbers"><code class="language-java">// 接收消息 - 仅需一行代码
+MqttPut.of("rsp/")
+    .response((topic, message) -> {
+        System.out.println("收到消息: " + message);
+    }).start();
+
+// 发布消息 - 简洁优雅
+MqttPush mqttPush = new MqttPush();
+mqttPush.push("your/topic", "Hello MQTT", 
+              MQTTQos.AT_LEAST_ONCE);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特性介绍 -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title" data-i18n="features.title">为什么选择 MQTT Macchiatto？</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 data-i18n="features.fast.title">快速集成</h3>
+                    <p data-i18n="features.fast.desc">仅需几行配置即可启动 MQTT 通信，告别繁琐的样板代码</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3 data-i18n="features.encapsulation.title">高度封装</h3>
+                    <p data-i18n="features.encapsulation.desc">屏蔽复杂的 API 调用，提供简洁明了的接口设计</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3 data-i18n="features.flexible.title">灵活扩展</h3>
+                    <p data-i18n="features.flexible.desc">支持多服务连接和手动配置，满足各种复杂场景</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3 data-i18n="features.reconnect.title">自动重连</h3>
+                    <p data-i18n="features.reconnect.desc">内置断线重连机制，让连接更加稳定可靠</p>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h3 class="comparison-title bad" data-i18n="features.comparison.native">使用原生 MQTT 😰</h3>
+                    <ul class="comparison-list" id="native-issues">
+                        <li><i class="fas fa-times"></i> <span data-i18n="features.comparison.native_issues.0">多层回调配置</span></li>
+                        <li><i class="fas fa-times"></i> <span data-i18n="features.comparison.native_issues.1">错误处理繁琐</span></li>
+                        <li><i class="fas fa-times"></i> <span data-i18n="features.comparison.native_issues.2">多服务连接困难</span></li>
+                        <li><i class="fas fa-times"></i> <span data-i18n="features.comparison.native_issues.3">代码冗余复杂</span></li>
+                    </ul>
+                </div>
+
+                <div class="comparison-item">
+                    <h3 class="comparison-title good" data-i18n="features.comparison.macchiatto">使用 MQTT Macchiatto 😊</h3>
+                    <ul class="comparison-list" id="macchiatto-benefits">
+                        <li><i class="fas fa-check"></i> <span data-i18n="features.comparison.macchiatto_benefits.0">一行配置连接服务</span></li>
+                        <li><i class="fas fa-check"></i> <span data-i18n="features.comparison.macchiatto_benefits.1">高度封装的工具类</span></li>
+                        <li><i class="fas fa-check"></i> <span data-i18n="features.comparison.macchiatto_benefits.2">清晰的代码组织</span></li>
+                        <li><i class="fas fa-check"></i> <span data-i18n="features.comparison.macchiatto_benefits.3">优雅的响应处理</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 快速开始 -->
+        <section id="quickstart" class="quickstart">
+            <div class="container">
+                <h2 class="section-title" data-i18n="quickstart.title">快速开始</h2>
+
+                <div class="quickstart-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3 data-i18n="quickstart.step1.title">添加依赖</h3>
+                            <div class="code-block">
+                                <pre class="line-numbers"><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.github.rururunu&lt;/groupId&gt;
+    &lt;artifactId&gt;MQTT-Macchiatto&lt;/artifactId&gt;
+    &lt;version&gt;0.1.3&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3 data-i18n="quickstart.step2.title">配置 application.yml</h3>
+                            <div class="code-block">
+                                <pre class="line-numbers"><code class="language-yaml">mto-mqtt:
+    host: tcp://your-host:1883
+    username: your-username
+    password: your-password
+    timeout: 10000
+    keepalive: 60
+    reconnect-frequency-ms: 5000</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3 data-i18n="quickstart.step3.title">启动类配置</h3>
+                            <div class="code-block">
+                                <pre class="line-numbers"><code class="language-java">@SpringBootApplication(
+    scanBasePackages = {
+        "your.project.path",
+        "io.github.rururunu"
+    }
+)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 代码示例 -->
+        <section id="examples" class="examples">
+            <div class="container">
+                <h2 class="section-title" data-i18n="examples.title">优秀代码示例</h2>
+
+                <div class="examples-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="listen" data-i18n="examples.tabs.listen">消息监听</button>
+                        <button class="tab-btn" data-tab="publish" data-i18n="examples.tabs.publish">消息发布</button>
+                        <button class="tab-btn" data-tab="advanced" data-i18n="examples.tabs.advanced">高级用法</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div class="tab-panel active" id="listen">
+                            <h3 data-i18n="examples.listen_title">消息监听 - 简洁优雅</h3>
+                            <div class="code-example">
+                                <pre class="line-numbers"><code class="language-java">// 基础监听 - 一行代码搞定
+MqttPut.of("rsp/")
+    .response((topic, message) -> {
+        System.out.println("收到消息: " + message);
+        // 在这里处理你的业务逻辑
+    }).start();
+
+// 带配置的监听
+MqttPut.of()
+    .setTopic("sensor/data")
+    .setServiceId("sensor-service")
+    .setCleanSession(true)
+    .response((message) -> {
+        // 处理传感器数据
+        processSensorData(message);
+    })
+    .start();
+
+// 自定义服务监听
+MqttPut.of("iot/devices/")
+    .host("tcp://iot.example.com:1883")
+    .username("iot-user")
+    .password("secure-password")
+    .timeout(10000)
+    .keepalive(60)
+    .cleanSession(false)
+    .reconnectFrequencyMs(5000)
+    .response((topic, msg) -> {
+        System.out.println("设备消息: " + topic + " -> " + msg);
+    })
+    .start();</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="tab-panel" id="publish">
+                            <h3 data-i18n="examples.publish_title">消息发布 - 功能强大</h3>
+                            <div class="code-example">
+                                <pre class="line-numbers"><code class="language-java">// 简单发布
+MqttPush mqttPush = new MqttPush();
+mqttPush.push("device/status", "online", MQTTQos.AT_LEAST_ONCE);
+
+// 带回调的发布
+mqttPush.push("sensor/temperature", "25.6°C", 
+    MQTTQos.AT_LEAST_ONCE,
+    token -> System.out.println("温度数据发送成功"),
+    (token, throwable) -> System.err.println("发送失败: " + throwable)
+);
+
+// 使用 Builder 模式自定义连接
+MqttPush customPush = new MqttPush.builder()
+    .host("tcp://production.mqtt.com:1883")
+    .username("prod-user")
+    .password("prod-password")
+    .timeout(15000)
+    .keepalive(120)
+    .cleanSession(false)
+    .build()
+    .init((e) -> {
+        System.out.println("MQTT 连接失败: " + e);
+    });
+
+// 发布关键业务数据
+customPush.push("business/orders", orderJson, 
+    MQTTQos.EXACTLY_ONCE,
+    (token) -> logSuccess("订单数据已发送"),
+    (token, error) -> handleError("订单发送失败", error)
+);
+
+// 长连接发布示例
+@Component
+public class DeviceController {
+    private MqttPush mqttPush = new MqttPush();
+    
+    public void reportDeviceStatus(String deviceId, String status) {
+        mqttPush.push("devices/" + deviceId + "/status", 
+                     status, MQTTQos.AT_LEAST_ONCE);
+    }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="tab-panel" id="advanced">
+                            <h3 data-i18n="examples.advanced_title">高级用法 - 企业级特性</h3>
+                            <div class="code-example">
+                                <pre class="line-numbers"><code class="language-java">// 多服务连接管理
+@Service
+public class MqttService {
+    
+    // 生产环境连接
+    private MqttPush productionPush = new MqttPush()
+        .host("tcp://prod.mqtt.com:1883")
+        .username("prod-user")
+        .password("prod-pass")
+        .cleanSession(false)
+        .reconnectFrequencyMs(3000);
+    
+    // 测试环境连接
+    private MqttPush testPush = new MqttPush()
+        .host("tcp://test.mqtt.com:1883")
+        .username("test-user")
+        .password("test-pass");
+    
+    @PostConstruct
+    public void init() {
+        productionPush.start();
+        testPush.start();
+    }
+}
+
+// 使用 MQTTMonitor 进行高级监听
+MQTTMonitor monitor = new MQTTMonitor();
+monitor.setClientId("advanced-client-" + UUID.randomUUID());
+monitor.setCleanSession(false);
+monitor.setQos(MQTTQos.EXACTLY_ONCE);
+
+monitor.setMqttCallback(new MqttCallback() {
+    @Override
+    public void connectionLost(Throwable cause) {
+        System.err.println("连接丢失，正在重连...");
+        monitor.reconnect(); // 自动重连
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) {
+        // 处理接收到的消息
+        String payload = new String(message.getPayload());
+        System.out.println("高级监听收到: " + topic + " -> " + payload);
+        
+        // 根据主题路由到不同的处理器
+        if (topic.startsWith("alerts/")) {
+            handleAlert(payload);
+        } else if (topic.startsWith("metrics/")) {
+            handleMetrics(payload);
+        }
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        System.out.println("消息投递完成");
+    }
+});
+
+// 启动高级监听
+monitor.start("system/+/status"); // 使用通配符监听</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系信息 -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2 class="section-title" data-i18n="contact.title">联系我</h2>
+
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h3 data-i18n="contact.email">邮箱</h3>
+                                <p>guolvaita@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <i class="fab fa-weixin"></i>
+                            <div>
+                                <h3 data-i18n="contact.wechat">微信</h3>
+                                <p>AfterTheMoonlight</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <i class="fab fa-github"></i>
+                            <div>
+                                <h3 data-i18n="contact.github">GitHub</h3>
+                                <p><a href="https://github.com/rururunu/MQTT-Macchiatto">rururunu/MQTT-Macchiatto</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="support-section">
+                        <h3 data-i18n="contact.support.title">支持项目</h3>
+                        <p data-i18n="contact.support.desc">如果你觉得这个项目对你有帮助，请不要吝啬点一个 ⭐ Star，这是我持续优化的最大动力！</p>
+                        <a href="https://github.com/rururunu/MQTT-Macchiatto" class="btn btn-primary">
+                            <i class="fas fa-star"></i>
+                            <span data-i18n="contact.support.button">给个 Star</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-left">
+                        <div class="footer-logo">
+                            <img src="MQTT-Macchiatto-Logo.svg" alt="MQTT Macchiatto Logo" class="footer-logo-image">
+                        </div>
+                        <p data-i18n="footer.slogan">让 MQTT 开发像一杯玛奇朵一样顺滑</p>
+                    </div>
+
+                    <div class="footer-links">
+                        <div class="footer-column">
+                            <h4 data-i18n="footer.links">项目链接</h4>
+                            <ul>
+                                <li><a href="https://github.com/rururunu/MQTT-Macchiatto">GitHub</a></li>
+                                <li><a href="https://gitee.com/guolvaita/mqtt-macchiatto">Gitee</a></li>
+                                <li><a href="https://central.sonatype.com/artifact/io.github.rururunu/MQTT-Macchiatto">Maven
+                                        Central</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-column">
+                            <h4 data-i18n="footer.docs">文档</h4>
+                            <ul>
+                                <li><a href="#quickstart" data-i18n="footer.quickstart">快速开始</a></li>
+                                <li><a href="#examples" data-i18n="footer.examples">代码示例</a></li>
+                                <li><a href="https://github.com/rururunu/MQTT-Macchiatto/blob/main/README_ZH.md" data-i18n="footer.chinese_docs">中文文档</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p data-i18n="footer.copyright">&copy; 2024 MQTT Macchiatto. Licensed under Apache License 2.0</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Prism.js 语法高亮库 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+        <script src="i18n.js"></script>
+        <script src="script.js"></script>
+</body>
+
+</html>

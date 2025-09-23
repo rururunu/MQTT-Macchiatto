@@ -1,0 +1,104 @@
+{
+  "zh": {
+    "title": "MQTT Macchiatto 使用文档",
+    "subtitle": "让你的 MQTT 开发像一杯玛奇朵一样顺滑",
+    "pages": [
+      {
+        "id": "motivation",
+        "title": "开发初衷",
+        "description": "了解 MQTT Macchiatto 的开发背景和设计理念"
+      },
+      {
+        "id": "about",
+        "title": "关于项目",
+        "description": "项目概述、核心特性和技术栈介绍"
+      },
+      {
+        "id": "installation",
+        "title": "引入依赖",
+        "description": "如何在项目中引入和配置 MQTT Macchiatto"
+      },
+      {
+        "id": "quick-start",
+        "title": "快速开始",
+        "description": "创建第一个 MQTT 应用的完整示例"
+      },
+      {
+        "id": "mqttput",
+        "title": "MqttPut 消息监听",
+        "description": "消息监听器的使用方法和最佳实践"
+      },
+      {
+        "id": "mqttpush",
+        "title": "MqttPush 消息发布",
+        "description": "消息发布的各种方式和配置选项"
+      },
+      {
+        "id": "mqttqos",
+        "title": "MQTTQos 质量等级",
+        "description": "MQTT 消息质量等级的详细说明"
+      },
+      {
+        "id": "mqttmonitor",
+        "title": "MQTTMonitor 监听器",
+        "description": "高级监听器功能和事件处理"
+      },
+      {
+        "id": "mqttreport",
+        "title": "MQTTReport 消息上报",
+        "description": "消息上报和状态监控功能"
+      }
+    ]
+  },
+  "en": {
+    "title": "MQTT Macchiatto Documentation",
+    "subtitle": "Make your MQTT development as smooth as a macchiatto",
+    "pages": [
+      {
+        "id": "motivation",
+        "title": "Development Motivation",
+        "description": "Learn about the development background and design philosophy of MQTT Macchiatto"
+      },
+      {
+        "id": "about",
+        "title": "About Project",
+        "description": "Project overview, core features and technology stack introduction"
+      },
+      {
+        "id": "installation",
+        "title": "Installation",
+        "description": "How to introduce and configure MQTT Macchiatto in your project"
+      },
+      {
+        "id": "quick-start",
+        "title": "Quick Start",
+        "description": "Complete example of creating your first MQTT application"
+      },
+      {
+        "id": "mqttput",
+        "title": "MqttPut Message Listening",
+        "description": "Usage methods and best practices for message listeners"
+      },
+      {
+        "id": "mqttpush",
+        "title": "MqttPush Message Publishing",
+        "description": "Various ways and configuration options for message publishing"
+      },
+      {
+        "id": "mqttqos",
+        "title": "MQTTQos Quality Levels",
+        "description": "Detailed explanation of MQTT message quality levels"
+      },
+      {
+        "id": "mqttmonitor",
+        "title": "MQTTMonitor Listener",
+        "description": "Advanced listener functionality and event handling"
+      },
+      {
+        "id": "mqttreport",
+        "title": "MQTTReport Message Reporting",
+        "description": "Message reporting and status monitoring functionality"
+      }
+    ]
+  }
+}

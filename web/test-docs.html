@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档系统测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>MQTT Macchiatto 文档系统测试</h1>
+    
+    <div id="test-results"></div>
+    
+    <script>
+        const results = document.getElementById('test-results');
+        
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+        
+        async function testDocumentationSystem() {
+            addResult('开始测试文档系统...', 'info');
+            
+            try {
+                // 测试导航配置文件
+                const navResponse = await fetch('docs/navigation.json');
+                if (navResponse.ok) {
+                    const navData = await navResponse.json();
+                    addResult('✓ 导航配置文件加载成功', 'success');
+                    addResult(`✓ 中文页面数量: ${navData.zh.pages.length}`, 'success');
+                    addResult(`✓ 英文页面数量: ${navData.en.pages.length}`, 'success');
+                } else {
+                    addResult('✗ 导航配置文件加载失败', 'error');
+                }
+                
+                // 测试中文文档
+                const zhPages = ['motivation', 'about', 'installation', 'quick-start', 'mqttput', 'mqttpush', 'mqttqos', 'mqttmonitor', 'mqttreport'];
+                for (const page of zhPages) {
+                    try {
+                        const response = await fetch(`docs/${page}.md`);
+                        if (response.ok) {
+                            addResult(`✓ 中文文档 ${page}.md 存在`, 'success');
+                        } else {
+                            addResult(`✗ 中文文档 ${page}.md 不存在`, 'error');
+                        }
+                    } catch (e) {
+                        addResult(`✗ 中文文档 ${page}.md 加载错误: ${e.message}`, 'error');
+                    }
+                }
+                
+                // 测试英文文档
+                for (const page of zhPages) {
+                    try {
+                        const response = await fetch(`docs/en/${page}.md`);
+                        if (response.ok) {
+                            addResult(`✓ 英文文档 en/${page}.md 存在`, 'success');
+                        } else {
+                            addResult(`✗ 英文文档 en/${page}.md 不存在`, 'error');
+                        }
+                    } catch (e) {
+                        addResult(`✗ 英文文档 en/${page}.md 加载错误: ${e.message}`, 'error');
+                    }
+                }
+                
+                addResult('文档系统测试完成！', 'info');
+                
+            } catch (error) {
+                addResult(`测试过程中发生错误: ${error.message}`, 'error');
+            }
+        }
+        
+        // 启动测试
+        testDocumentationSystem();
+    </script>
+</body>
+</html>

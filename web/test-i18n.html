@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双语言功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .lang-btn { margin: 5px; padding: 8px 16px; cursor: pointer; }
+        .lang-btn.active { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>MQTT Macchiatto 双语言功能测试</h1>
+    
+    <div class="language-selector">
+        <button class="lang-btn active" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+    </div>
+    
+    <div id="test-results"></div>
+    
+    <h2>测试内容</h2>
+    <div id="test-content">
+        <p data-i18n="hero.subtitle">Spring Boot 下优雅的 MQTT 消息通信封装工具</p>
+        <p data-i18n="hero.description">让你的开发像一杯玛奇朵一样顺滑</p>
+        <p data-i18n="features.title">为什么选择 MQTT Macchiatto？</p>
+        <p data-i18n="contact.title">联系我</p>
+    </div>
+    
+    <script>
+        const results = document.getElementById('test-results');
+        
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+        
+        async function testI18nSystem() {
+            addResult('开始测试双语言系统...', 'info');
+            
+            try {
+                // 测试i18n.json文件
+                const i18nResponse = await fetch('i18n.json');
+                if (i18nResponse.ok) {
+                    const i18nData = await i18nResponse.json();
+                    addResult('✓ i18n.json 文件加载成功', 'success');
+                    addResult(`✓ 中文翻译条目数: ${Object.keys(i18nData.zh).length}`, 'success');
+                    addResult(`✓ 英文翻译条目数: ${Object.keys(i18nData.en).length}`, 'success');
+                    
+                    // 测试关键翻译
+                    const testKeys = ['hero.subtitle', 'hero.description', 'features.title', 'contact.title'];
+                    testKeys.forEach(key => {
+                        const zhValue = getNestedValue(i18nData.zh, key);
+                        const enValue = getNestedValue(i18nData.en, key);
+                        if (zhValue && enValue) {
+                            addResult(`✓ 翻译键 "${key}" 存在: ${zhValue} / ${enValue}`, 'success');
+                        } else {
+                            addResult(`✗ 翻译键 "${key}" 缺失`, 'error');
+                        }
+                    });
+                } else {
+                    addResult('✗ i18n.json 文件加载失败', 'error');
+                }
+                
+                // 测试i18n.js文件
+                const i18nJsResponse = await fetch('i18n.js');
+                if (i18nJsResponse.ok) {
+                    addResult('✓ i18n.js 文件存在', 'success');
+                } else {
+                    addResult('✗ i18n.js 文件不存在', 'error');
+                }
+                
+                addResult('双语言系统测试完成！', 'info');
+                
+            } catch (error) {
+                addResult(`测试过程中发生错误: ${error.message}`, 'error');
+            }
+        }
+        
+        function getNestedValue(obj, key) {
+            const keys = key.split('.');
+            let value = obj;
+            for (const k of keys) {
+                if (value && typeof value === 'object') {
+                    value = value[k];
+                } else {
+                    return null;
+                }
+            }
+            return value;
+        }
+        
+        // 启动测试
+        testI18nSystem();
+        
+        // 简单的语言切换测试
+        document.addEventListener('click', (e) => {
+            const langBtn = e.target.closest('.lang-btn');
+            if (langBtn) {
+                document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+                langBtn.classList.add('active');
+                const lang = langBtn.getAttribute('data-lang');
+                addResult(`语言切换到: ${lang}`, 'info');
+            }
+        });
+    </script>
+</body>
+</html>
