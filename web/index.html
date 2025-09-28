@@ -244,9 +244,9 @@ MqttPut.of("rsp/")
 
 // 带配置的监听
 MqttPut.of()
-    .setTopic("sensor/data")
-    .setServiceId("sensor-service")
-    .setCleanSession(true)
+    .topic("sensor/data")
+    .serviceId("sensor-service")
+    .cleanSession(true)
     .response((message) -> {
         // 处理传感器数据
         processSensorData(message);
