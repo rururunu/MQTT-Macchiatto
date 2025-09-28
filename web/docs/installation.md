@@ -8,7 +8,7 @@
 <dependency>
     <groupId>io.github.rururunu</groupId>
     <artifactId>MQTT-Macchiatto</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.5</version>
 </dependency>
 ```
 

@@ -18,7 +18,7 @@ MQTT Macchiatto 是一个专为 Spring Boot 设计的 MQTT 消息通信封装工
 
 ## 项目信息
 
-- **版本**：0.1.3
+- **版本**：0.1.5
 - **许可证**：Apache License 2.0
 - **作者**：rururunu
 - **GitHub**：[https://github.com/rururunu/MQTT-Macchiatto](https://github.com/rururunu/MQTT-Macchiatto)

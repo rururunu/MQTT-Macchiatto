@@ -18,7 +18,7 @@ MQTT Macchiatto is an MQTT message communication wrapper tool designed specifica
 
 ## Project Information
 
-- **Version**: 0.1.3
+- **Version**: 0.1.5
 - **License**: Apache License 2.0
 - **Author**: rururunu
 - **GitHub**: [https://github.com/rururunu/MQTT-Macchiatto](https://github.com/rururunu/MQTT-Macchiatto)

@@ -2,6 +2,35 @@
 
 `MqttPut` is the core utility class for receiving MQTT messages, providing a clean chained API.
 
+## Quick Start
+
+```java
+// Subscribe, handle, start
+MqttPut.of("demo/hello")
+    .response((topic, msg) -> System.out.println("Got: " + msg))
+    .start();
+```
+
+Need custom server/auth/QoS?
+
+```java
+MqttPut.of("demo/+/events")
+    .host("tcp://127.0.0.1:1883")
+    .username("user")
+    .password("pass")
+    .qos(MQTTQos.AT_LEAST_ONCE)
+    .response((topic, msg) -> System.out.println(topic + " -> " + msg))
+    .start();
+```
+
+## Highlights
+
+- Simple chaining: `of()->response()->start()`
+- Flexible callbacks: payload-only, with topic, or full `MqttMessage`
+- Robustness: auto-reconnect, QoS, clean session, heartbeat, timeout
+- Lifecycle hooks: `connectionLost`, `deliveryComplete`
+- Easy integration: friendly with Spring Boot and custom routing
+
 ## Basic Usage
 
 ```java
@@ -44,19 +73,25 @@ MqttPut.of("sensor/data")
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `setTopic(String topic)` | Topic name | Set subscription topic |
-| `setServiceId(String serviceId)` | Service ID | Set client ID |
-| `clientId(String clientId)` | Client ID | Set client ID (same as setServiceId) |
-| `setCleanSession(boolean clean)` | Whether to clean session | Set session cleanup flag |
-
+| `topic(String topic)` | Topic name | Set subscription topic |
+| `serviceId(String serviceId)` | Service ID | Set client ID (same as `clientId`) |
+| `clientId(String clientId)` | Client ID | Set client ID |
 ## Message Response Methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `response(Consumer<String> consumer)` | Message handler function | Set message handler callback, receives only message content |
-| `response(BiConsumer<String, String> biConsumer)` | Topic and message handler function | Set message handler callback, receives topic and message content |
-| `response(String clientId, Consumer<String> consumer)` | Client ID, message handler function | Message handler callback with specified client ID |
-| `response(String clientId, BiConsumer<String, MqttMessage> biConsumer)` | Client ID, message handler function | Specified client ID, receives message content and MqttMessage object |
+| `response(Consumer<String> consumer)` | Message handler | Receive payload only (String) |
+| `response(Consumer<String> consumer, Consumer<Throwable> connectionLost)` | Message handler, error callback | Handle payload and listen for connection lost errors |
+| `response(Consumer<String> consumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | Message handler, error callback, delivery callback | Full lifecycle callbacks (message, error, delivery) |
+| `response(BiConsumer<String, String> biConsumer)` | Topic + message handler | Receive topic and payload (String) |
+| `response(BiConsumer<String, String> biConsumer, Consumer<Throwable> connectionLost)` | Topic + message handler, error callback | Same as above with error callback |
+| `response(BiConsumer<String, String> biConsumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | Topic + message handler, error callback, delivery callback | Same as above with delivery callback |
+| `responseRow(Consumer<MqttMessage> consumer)` | Message handler | Receive full `MqttMessage` object |
+| `responseRow(Consumer<MqttMessage> consumer, Consumer<Throwable> connectionLost)` | Message handler, error callback | Full message object + error callback |
+| `responseRow(Consumer<MqttMessage> consumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | Message handler, error callback, delivery callback | Full message object + full lifecycle callbacks |
+| `responseRow(BiConsumer<String, MqttMessage> biConsumer)` | Topic + message handler | Receive topic + full `MqttMessage` object |
+| `responseRow(BiConsumer<String, MqttMessage> biConsumer, Consumer<Throwable> connectionLost)` | Topic + message handler, error callback | Same as above with error callback |
+| `responseRow(BiConsumer<String, MqttMessage> biConsumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | Topic + message handler, error callback, delivery callback | Same as above with delivery callback |
 
 ## Control Methods
 
@@ -70,14 +105,14 @@ MqttPut.of("sensor/data")
 ### Basic Listening Example
 
 ```java
-// Listen to single topic
+// Listen to a single topic
 MqttPut.of("device/status")
     .response((topic, message) -> {
         System.out.println("Device status update: " + message);
     })
     .start();
 
-// Use wildcards to listen to multiple topics
+// Use wildcard to listen to multiple topics
 MqttPut.of("sensor/+/data")
     .response((topic, message) -> {
         String[] parts = topic.split("/");
@@ -119,14 +154,14 @@ public class DeviceMessageListener {
     public void initListeners() {
         // Listen to device status
         MqttPut.of("device/+/status")
-            .setServiceId("device-status-listener")
-            .setCleanSession(false)
+            .serviceId("device-status-listener")
+            .cleanSession(false)
             .response(this::handleDeviceStatus)
             .start();
         
         // Listen to sensor data
         MqttPut.of("sensor/+/data")
-            .setServiceId("sensor-data-listener")
+            .serviceId("sensor-data-listener")
             .qos(MQTTQos.AT_LEAST_ONCE)
             .response(this::handleSensorData)
             .start();
@@ -151,6 +186,23 @@ public class DeviceMessageListener {
     }
 }
 ```
+
+## FAQ
+
+- **How do I set a custom client ID?**
+  Use `serviceId("your-id")` or `clientId("your-id")` before `start()`.
+
+- **How do I get the raw MQTT message (headers, QoS, retained)?**
+  Use `responseRow(...)` overloads to receive `MqttMessage` directly.
+
+- **Which QoS should I choose?**
+  `AT_MOST_ONCE` for best performance, `AT_LEAST_ONCE` for balanced reliability, `EXACTLY_ONCE` for maximum reliability.
+
+- **What if the connection drops?**
+  Auto-reconnect is enabled. You can also provide a `connectionLost` callback for logging or recovery.
+
+- **Avoid blocking in handlers?**
+  Yes. Offload heavy work to thread pools or async executors to keep the listener responsive.
 
 ## Topic Wildcards
 

@@ -2,6 +2,35 @@
 
 `MqttPut` 是用于接收 MQTT 消息的核心工具类，提供了简洁的链式调用API。
 
+## 快速开始
+
+```java
+// 一行订阅 + 一行处理 + 一行启动
+MqttPut.of("demo/hello")
+    .response((topic, msg) -> System.out.println("收到: " + msg))
+    .start();
+```
+
+更复杂的需求（自定义服务器/鉴权/QoS）：
+
+```java
+MqttPut.of("demo/+/events")
+    .host("tcp://127.0.0.1:1883")
+    .username("user")
+    .password("pass")
+    .qos(MQTTQos.AT_LEAST_ONCE)
+    .response((topic, msg) -> System.out.println(topic + " -> " + msg))
+    .start();
+```
+
+## 功能亮点
+
+- 简洁链式：`of()->response()->start()` 三步完成监听
+- 多种回调：支持只要字符串消息、或获得完整 `MqttMessage`、可带主题
+- 异常与回执：可配置 `connectionLost`、`deliveryComplete` 回调
+- 生产可用：自动重连、QoS 支持、清理会话、心跳、超时等通用参数
+- 易扩展：与 Spring Boot 良好集成，可灵活组装业务路由
+
 ## 基础用法
 
 ```java
@@ -39,24 +68,30 @@ MqttPut.of("sensor/data")
 | `cleanSession(boolean clean)` | 是否清理会话 | 设置会话清理标志 |
 | `reconnectFrequencyMs(int ms)` | 重连间隔(毫秒) | 设置自动重连间隔 |
 | `qos(MQTTQos qos)` | QoS等级 | 设置消息质量等级 |
-
 ## 主题和客户端配置
 
 | 方法 | 参数 | 说明 |
 |------|------|------|
-| `setTopic(String topic)` | 主题名称 | 设置订阅的主题 |
-| `setServiceId(String serviceId)` | 服务ID | 设置客户端ID |
-| `clientId(String clientId)` | 客户端ID | 设置客户端ID（同setServiceId） |
-| `setCleanSession(boolean clean)` | 是否清理会话 | 设置会话清理标志 |
+| `topic(String topic)` | 主题名称 | 设置订阅的主题 |
+| `serviceId(String serviceId)` | 服务ID | 设置客户端ID（等同于 clientId） |
+| `clientId(String clientId)` | 客户端ID | 设置客户端ID |
 
 ## 消息响应方法
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `response(Consumer<String> consumer)` | 消息处理函数 | 设置消息处理回调，只接收消息内容 |
-| `response(BiConsumer<String, String> biConsumer)` | 主题和消息处理函数 | 设置消息处理回调，接收主题和消息内容 |
-| `response(String clientId, Consumer<String> consumer)` | 客户端ID, 消息处理函数 | 指定客户端ID的消息处理回调 |
-| `response(String clientId, BiConsumer<String, MqttMessage> biConsumer)` | 客户端ID, 消息处理函数 | 指定客户端ID，接收消息内容和MqttMessage对象 |
+| 方法签名 | 参数 | 说明 |
+| --- | --- | --- |
+| `response(Consumer<String> consumer)` | 消息处理函数 | 仅接收消息内容（String） |
+| `response(Consumer<String> consumer, Consumer<Throwable> connectionLost)` | 消息处理函数, 异常回调 | 接收消息内容；监听连接断开异常 |
+| `response(Consumer<String> consumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | 消息处理函数, 异常回调, 投递完成回调 | 完整生命周期回调（消息、异常、回执） |
+| `response(BiConsumer<String, String> biConsumer)` | 主题+消息处理函数 | 同时接收主题和消息内容（String） |
+| `response(BiConsumer<String, String> biConsumer, Consumer<Throwable> connectionLost)` | 主题+消息处理函数, 异常回调 | 同上，增加异常回调 |
+| `response(BiConsumer<String, String> biConsumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | 主题+消息处理函数, 异常回调, 投递完成回调 | 同上，增加服务端回执监听 |
+| `responseRow(Consumer<MqttMessage> consumer)` | 消息处理函数 | 仅接收完整 `MqttMessage` 对象 |
+| `responseRow(Consumer<MqttMessage> consumer, Consumer<Throwable> connectionLost)` | 消息处理函数, 异常回调 | 接收完整消息对象；监听异常 |
+| `responseRow(Consumer<MqttMessage> consumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | 消息处理函数, 异常回调, 投递完成回调 | 完整消息对象 + 完整生命周期回调 |
+| `responseRow(BiConsumer<String, MqttMessage> biConsumer)` | 主题+消息处理函数 | 接收主题 + 完整 `MqttMessage` 对象 |
+| `responseRow(BiConsumer<String, MqttMessage> biConsumer, Consumer<Throwable> connectionLost)` | 主题+消息处理函数, 异常回调 | 同上，增加异常回调 |
+| `responseRow(BiConsumer<String, MqttMessage> biConsumer, Consumer<Throwable> connectionLost, Consumer<IMqttDeliveryToken> deliveryComplete)` | 主题+消息处理函数, 异常回调, 投递完成回调 | 同上，增加服务端回执监听 |
 
 ## 控制方法
 
@@ -85,8 +120,19 @@ MqttPut.of("sensor/+/data")
         System.out.println("传感器 " + sensorId + " 数据: " + message);
     })
     .start();
-```
 
+// 带异常回调的监听单个主题
+MqttPut.of("device/status")
+    .response(
+        msg -> {
+            System.out.println("设备状态更新: " + msg);
+        },
+        err -> {
+            System.out.println("订阅设备状态异常: " + err);
+        } 
+    )
+    .start();
+```
 ### 自定义配置示例
 
 ```java
@@ -119,14 +165,14 @@ public class DeviceMessageListener {
     public void initListeners() {
         // 监听设备状态
         MqttPut.of("device/+/status")
-            .setServiceId("device-status-listener")
-            .setCleanSession(false)
+            .serviceId("device-status-listener")
+            .cleanSession(false)
             .response(this::handleDeviceStatus)
             .start();
         
         // 监听传感器数据
         MqttPut.of("sensor/+/data")
-            .setServiceId("sensor-data-listener")
+            .serviceId("sensor-data-listener")
             .qos(MQTTQos.AT_LEAST_ONCE)
             .response(this::handleSensorData)
             .start();
