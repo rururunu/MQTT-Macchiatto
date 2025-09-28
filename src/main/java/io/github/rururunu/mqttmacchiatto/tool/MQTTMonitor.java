@@ -133,7 +133,7 @@ public class MQTTMonitor {
             this.topic = topicStr;
             client = new MqttClient(host, getClientId(), new MemoryPersistence());
             options = new MqttConnectOptions();
-            options.setCleanSession(false);
+            options.setCleanSession(cleanSession);
             options.setUserName(username);
             options.setPassword(password.toCharArray());
             options.setConnectionTimeout(timeout);
@@ -164,13 +164,12 @@ public class MQTTMonitor {
                 while (!client.isConnected()) {
                     if (System.currentTimeMillis() - sleepTime > reconnectFrequencyMs) {
                         try {
-                            client.connect();
-                            client.subscribe(topic);
                             start(topic);
                         } catch (Exception e) {
                             throw new RuntimeException("Reconnect MQTT[{" + clientId + "}]<{" + topic + "}> Exception", e);
+                        } finally {
+                            sleepTime = System.currentTimeMillis();
                         }
-                        sleepTime = System.currentTimeMillis();
                     }
                 }
                 System.out.println("MQTT[{" + clientId + "}]<{" + topic + "}> Reconnect successfully");

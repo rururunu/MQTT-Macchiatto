@@ -139,12 +139,12 @@ public class MqttPut {
      * @return MqttPut
      */
     public MqttPut response(Consumer<String> consumer) {
-        monitor.setClientId(topic + UUID.randomUUID());
+        monitor.setClientId(String.valueOf(UUID.randomUUID()));
         monitor.setMqttCallback(
                 new MqttCallback() {
                     @Override
                     public void connectionLost(Throwable throwable) {
-                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected " + throwable);
                         monitor.reconnect();
                     }
 
@@ -168,6 +168,101 @@ public class MqttPut {
      * <br/>
      * 设定监听到消息后的响应
      *
+     * @param consumer      Response after listening to the message 监听到消息后的响应
+     *                      <br/>
+     *                      consumer 的参数值是消息内容为String类型
+     *                      <br/>
+     *                      The parameter value of the consumer is that the message content is of type String
+     * @param connectionLost   Operation after listening for exceptions 监听发生异常后的操作
+     *                         <br/>
+     *                         connectionLost 的参数值是消息内容是 Throwable 类型
+     *                         <br/>
+     *                         The parameter value of connectionLost is that the message content is of type Throwable
+     * @return MqttPut
+     */
+    public MqttPut response(Consumer<String> consumer, Consumer<Throwable> connectionLost) {
+        monitor.setClientId(String.valueOf(UUID.randomUUID()));
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected " + throwable);
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String topic, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        consumer.accept(msg);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
+     * @param consumer         Response after listening to the message 监听到消息后的响应
+     *                         <br/>
+     *                         consumer 的参数值是消息内容为String类型
+     *                         <br/>
+     *                         The parameter value of the consumer is that the message content is of type String
+     * @param connectionLost   Operation after listening for exceptions 监听发生异常后的操作
+     *                         <br/>
+     *                         connectionLost 的参数值是消息内容是 Throwable 类型
+     *                         <br/>
+     *                         The parameter value of connectionLost is that the message content is of type Throwable
+     * @param deliveryComplete Monitor whether a receipt is received from the server 监听是否到服务端的回执
+     *                         <br/>
+     *                         deliveryComplete 的参数值是消息内容是 deliveryComplete 类型
+     *                         <br/>
+     *                         The parameter value for deliveryComplete is that the message content is of type deliveryComplete
+     * @return MqttPut
+     */
+    public MqttPut response(
+            Consumer<String> consumer,
+            Consumer<Throwable> connectionLost,
+            Consumer<IMqttDeliveryToken> deliveryComplete
+    ) {
+        monitor.setClientId(String.valueOf(UUID.randomUUID()));
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected " + throwable);
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String topic, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        consumer.accept(msg);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                        deliveryComplete.accept(iMqttDeliveryToken);
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
      * @param biConsumer Response after listening to the message 监听到消息后的响应
      *                   <br/>
      *                   biConsumer param1 topic:string
@@ -180,7 +275,7 @@ public class MqttPut {
      * @return MqttPut
      */
     public MqttPut response(BiConsumer<String, String> biConsumer) {
-        monitor.setClientId(topic + UUID.randomUUID());
+        monitor.setClientId(UUID.randomUUID().toString());
         monitor.setMqttCallback(
                 new MqttCallback() {
                     @Override
@@ -198,6 +293,109 @@ public class MqttPut {
                     @Override
                     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
+     * @param biConsumer     Response after listening to the message 监听到消息后的响应
+     *                       <br/>
+     *                       biConsumer param1 topic:string
+     *                       <br/>
+     *                       biConsumer param2 msg:string
+     *                       <br/>
+     *                       biConsumer 参数1 主题:string
+     *                       <br/>
+     *                       biConsumer 参数2 消息:string
+     * @param connectionLost Operation after listening for exceptions 监听发生异常后的操作
+     *                       <br/>
+     *                       connectionLost 的参数值是消息内容是 Throwable 类型
+     *                       <br/>
+     *                       The parameter value of connectionLost is that the message content is of type Throwable
+     * @return MqttPut
+     */
+    public MqttPut response(BiConsumer<String, String> biConsumer, Consumer<Throwable> connectionLost) {
+        monitor.setClientId(UUID.randomUUID().toString());
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String topic, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        biConsumer.accept(topic, msg);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
+     * @param biConsumer       Response after listening to the message 监听到消息后的响应
+     *                         <br/>
+     *                         biConsumer param1 topic:string
+     *                         <br/>
+     *                         biConsumer param2 msg:string
+     *                         <br/>
+     *                         biConsumer 参数1 主题:string
+     *                         <br/>
+     *                         biConsumer 参数2 消息:string
+     * @param connectionLost   Operation after listening for exceptions 监听发生异常后的操作
+     *                         <br/>
+     *                         connectionLost 的参数值是消息内容是 Throwable 类型
+     *                         <br/>
+     *                         The parameter value of connectionLost is that the message content is of type Throwable
+     * @param deliveryComplete Monitor whether a receipt is received from the server 监听是否到服务端的回执
+     *                         <br/>
+     *                         deliveryComplete 的参数值是消息内容是 deliveryComplete 类型
+     *                         <br/>
+     *                         The parameter value for deliveryComplete is that the message content is of type deliveryComplete
+     * @return MqttPut
+     */
+    public MqttPut response(
+            BiConsumer<String, String> biConsumer,
+            Consumer<Throwable> connectionLost,
+            Consumer<IMqttDeliveryToken> deliveryComplete
+    ) {
+        monitor.setClientId(UUID.randomUUID().toString());
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String topic, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        biConsumer.accept(topic, msg);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                        deliveryComplete.accept(iMqttDeliveryToken);
                     }
                 }
         );
@@ -247,6 +445,108 @@ public class MqttPut {
      * <br/>
      * 设定监听到消息后的响应
      *
+     * @param clientId       Client ID
+     * @param consumer       Response after listening to the message 监听到消息后的响应
+     *                       <br/>
+     *                       consumer 的参数值是消息内容为String类型
+     *                       <br/>
+     *                       The parameter value of the consumer is that the message content is of type String
+     * @param connectionLost Operation after listening for exceptions 监听发生异常后的操作
+     *                       <br/>
+     *                       connectionLost 的参数值是消息内容是 Throwable 类型
+     *                       <br/>
+     *                       The parameter value of connectionLost is that the message content is of type Throwable
+     * @return MqttPut
+     */
+    public MqttPut response(
+            String clientId,
+            Consumer<String> consumer,
+            Consumer<Throwable> connectionLost
+    ) {
+        monitor.setClientId(clientId);
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String s, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        consumer.accept(msg);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
+     * @param clientId         Client ID
+     * @param consumer         Response after listening to the message 监听到消息后的响应
+     *                         <br/>
+     *                         consumer 的参数值是消息内容为String类型
+     *                         <br/>
+     *                         The parameter value of the consumer is that the message content is of type String
+     * @param connectionLost   Operation after listening for exceptions 监听发生异常后的操作
+     *                         <br/>
+     *                         connectionLost 的参数值是消息内容是 Throwable 类型
+     *                         <br/>
+     *                         The parameter value of connectionLost is that the message content is of type Throwable
+     * @param deliveryComplete Monitor whether a receipt is received from the server 监听是否到服务端的回执
+     *                         <br/>
+     *                         deliveryComplete 的参数值是消息内容是 deliveryComplete 类型
+     *                         <br/>
+     *                         The parameter value for deliveryComplete is that the message content is of type deliveryComplete
+     * @return MqttPut
+     */
+    public MqttPut response(
+            String clientId,
+            Consumer<String> consumer,
+            Consumer<Throwable> connectionLost,
+            Consumer<IMqttDeliveryToken> deliveryComplete
+    ) {
+        monitor.setClientId(clientId);
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String s, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        consumer.accept(msg);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                        deliveryComplete.accept(iMqttDeliveryToken);
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
      * @param clientId   Client ID
      * @param biConsumer Response after listening to the message 监听到消息后的响应
      *                   <br/>
@@ -278,6 +578,116 @@ public class MqttPut {
                     @Override
                     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
+     * @param clientId       Client ID
+     * @param biConsumer     Response after listening to the message 监听到消息后的响应
+     *                       <br/>
+     *                       biConsumer param1 topic:string
+     *                       <br/>
+     *                       biConsumer param2 msg:string
+     *                       <br/>
+     *                       biConsumer 参数1 主题:string
+     *                       <br/>
+     *                       biConsumer 参数2 消息:string
+     * @param connectionLost Operation after listening for exceptions 监听发生异常后的操作
+     *                       <br/>
+     *                       connectionLost 的参数值是消息内容是 Throwable 类型
+     *                       <br/>
+     *                       The parameter value of connectionLost is that the message content is of type Throwable
+     * @return MqttPut
+     */
+    public MqttPut response(
+            String clientId,
+            BiConsumer<String, MqttMessage> biConsumer,
+            Consumer<Throwable> connectionLost
+    ) {
+        monitor.setClientId(clientId);
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String s, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        biConsumer.accept(msg, mqttMessage);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+
+                    }
+                }
+        );
+        return this;
+    }
+
+    /**
+     * Set the response after listening to messages
+     * <br/>
+     * 设定监听到消息后的响应
+     *
+     * @param clientId         Client ID
+     * @param biConsumer       Response after listening to the message 监听到消息后的响应
+     *                         <br/>
+     *                         biConsumer param1 topic:string
+     *                         <br/>
+     *                         biConsumer param2 msg:string
+     *                         <br/>
+     *                         biConsumer 参数1 主题:string
+     *                         <br/>
+     *                         biConsumer 参数2 消息:string
+     * @param connectionLost   Operation after listening for exceptions 监听发生异常后的操作
+     *                         <br/>
+     *                         connectionLost 的参数值是消息内容是 Throwable 类型
+     *                         <br/>
+     *                         The parameter value of connectionLost is that the message content is of type Throwable
+     * @param deliveryComplete Monitor whether a receipt is received from the server 监听是否到服务端的回执
+     *                         <br/>
+     *                         deliveryComplete 的参数值是消息内容是 deliveryComplete 类型
+     *                         <br/>
+     *                         The parameter value for deliveryComplete is that the message content is of type deliveryComplete
+     * @return MqttPut
+     */
+    public MqttPut response(
+            String clientId,
+            BiConsumer<String, MqttMessage> biConsumer,
+            Consumer<Throwable> connectionLost,
+            Consumer<IMqttDeliveryToken> deliveryComplete
+    ) {
+        monitor.setClientId(clientId);
+        monitor.setMqttCallback(
+                new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable throwable) {
+                        System.err.println(monitor.getClientId() + " MQTT Connection disconnected ");
+                        monitor.reconnect();
+                        connectionLost.accept(throwable);
+                    }
+
+                    @Override
+                    public void messageArrived(String s, MqttMessage mqttMessage) {
+                        String msg = new String(mqttMessage.getPayload());
+                        biConsumer.accept(msg, mqttMessage);
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                        deliveryComplete.accept(iMqttDeliveryToken);
                     }
                 }
         );
