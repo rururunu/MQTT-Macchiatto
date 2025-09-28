@@ -754,7 +754,6 @@
             loadMarkdown(currentPage);
             
             // 重新初始化导航事件（因为DOM已更新）
-            // 更新URL
             history.pushState({page: currentPage, lang}, '', `#${currentPage}`);
         }
 
@@ -775,18 +774,14 @@
                 }
             });
             
-            // 处理初始URL hash
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                // 检查是否是有效的页面
-                setTimeout(() => {
-                    if (navigationData && navigationData[currentLang]) {
-                        const validPage = navigationData[currentLang].pages.find(p => p.id === hash);
-                        if (validPage) {
-                            currentPage = hash;
-                        }
-                    }
-                }, 100);
+            // 处理初始URL hash：如果有有效 hash，立即导航到对应页面
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && navigationData && navigationData[currentLang]) {
+                const validPage = navigationData[currentLang].pages.find(p => p.id === initialHash);
+                if (validPage) {
+                    currentPage = initialHash;
+                    navigateToPage(initialHash);
+                }
             }
         }
 
@@ -808,8 +803,13 @@
             initNavigation();
             initHistoryHandling();
             
-            // 加载初始页面
-            loadMarkdown(currentPage);
+            // 加载初始页面：如果 URL 中有有效 hash，initHistoryHandling 已经触发了导航，这里避免重复加载
+            const initialHash = window.location.hash.substring(1);
+            const hasValidHash = initialHash && navigationData && navigationData[currentLang] &&
+                navigationData[currentLang].pages.some(p => p.id === initialHash);
+            if (!hasValidHash) {
+                loadMarkdown(currentPage);
+            }
         });
     </script>
 </body>
