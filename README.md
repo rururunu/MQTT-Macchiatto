@@ -94,9 +94,9 @@ mqttPush.push("your/topic", "Message", MQTTQos.AT_LEAST_ONCE,
 ### 📥 Other Message Listening Examples
 ```java
 MqttPut.of()
-    .setTopic("topic")
-    .setServiceId("serviceId")
-    .setCleanSession(true)
+    .topic("topic")
+    .serviceId("serviceId")
+    .cleanSession(true)
     .response((message) -> {
         // Write the response operation for receiving messages here
     })

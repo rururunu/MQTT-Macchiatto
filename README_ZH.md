@@ -100,9 +100,9 @@ mqttPush.push("your/topic", "Message", MQTTQos.AT_LEAST_ONCE,
 ### 📥 接收消息其他示例- Listen
 ```java
 MqttPut.of()
-    .setTopic("topic")
-    .setServiceId("serviceId")
-    .setCleanSession(true)
+    .topic("topic")
+    .serviceId("serviceId")
+    .cleanSession(true)
     .response((message) -> {
         // 在这里编写收到消息的响应操作
         // Write the response operation for receiving messages here
