@@ -46,11 +46,10 @@ mqtt:
 // 发送消息只需一行代码
 mqttPush.push("topic/test", "Hello World", MQTTQos.AT_LEAST_ONCE);
 
-// 监听消息只需一个注解
-@MqttPut("topic/+")
-public void handleMessage(String topic, String message) {
-    // 处理消息
-}
+// 一行订阅 + 一行处理 + 一行启动
+MqttPut.of("demo/hello")
+    .response((topic, msg) -> System.out.println("收到: " + msg))
+    .start();
 ```
 
 **自动化管理**
@@ -103,10 +102,18 @@ public void handleMessage(String topic, String message) {
 - 修复已知问题
 - 增强错误处理
 
-**v0.1.3** - 当前版本
+**v0.1.3** - 性能优化
 - 完善文档系统
 - 添加更多示例
 - 性能优化
+
+**v0.1.4** - 优化重连
+- 增强重连
+- 增强 `MqttPut`
+
+**v0.1.5** - 优化监听(当前版本)
+- 优化 `MqttPut` 的调用书写体验
+- 修复文档中的遗漏和错误
 
 ### 🤝 社区贡献
 

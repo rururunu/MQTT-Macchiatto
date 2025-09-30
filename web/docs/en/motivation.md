@@ -46,11 +46,10 @@ mqtt:
 // Send message with just one line of code
 mqttPush.push("topic/test", "Hello World", MQTTQos.AT_LEAST_ONCE);
 
-// Listen to messages with just one annotation
-@MqttPut("topic/+")
-public void handleMessage(String topic, String message) {
-    // Handle message
-}
+// One line subscription+one line processing+one line startup
+MqttPut.of("demo/hello")
+    .response((topic, msg) -> System.out.println("received: " + msg))
+    .start();
 ```
 
 **Automated Management**
@@ -107,6 +106,14 @@ public void handleMessage(String topic, String message) {
 - Improved documentation system
 - Added more examples
 - Performance optimization
+
+**V0.1.4** - Optimize reconnection
+- Enhance reconnection
+- Enhance MqttPut`
+
+**V0.1.5** - Optimized Listening (Current Version)
+- Optimize the calling and writing experience of MqttPut
+- Fix omissions and errors in the document
 
 ### 🤝 Community Contribution
 

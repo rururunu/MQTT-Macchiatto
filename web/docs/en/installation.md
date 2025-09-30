@@ -15,7 +15,7 @@ Add the following dependency to your `pom.xml` file:
 ## Gradle Dependency
 
 ```gradle
-implementation 'io.github.rururunu:MQTT-Macchiatto:0.1.3'
+implementation 'io.github.rururunu:MQTT-Macchiatto:0.1.5'
 ```
 
 ## Spring Boot Configuration

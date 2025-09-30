@@ -15,7 +15,7 @@
 ## Gradle 依赖
 
 ```gradle
-implementation 'io.github.rururunu:MQTT-Macchiatto:0.1.3'
+implementation 'io.github.rururunu:MQTT-Macchiatto:0.1.5'
 ```
 
 ## Spring Boot 配置
