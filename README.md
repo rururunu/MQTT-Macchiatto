@@ -255,15 +255,5 @@ class MqttMacchiatto {
 <br>
 <br>
 
-## 💬 Contact
-For suggestions, issues, or collaboration:
-
-* 📧 Email: guolvaita@gmail.com
-
-* 💬 WeChat: AfterTheMoonlight
-  <br>
-  <br>
-  <br>
-
 ## 🌟 Support Me
 If you find this project helpful, consider giving it a 🌟 Star. It's my biggest motivation to keep improving!
