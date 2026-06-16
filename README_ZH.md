@@ -277,15 +277,5 @@ class MqttMacchiatto {
 <br/>
 <br/>
 
-## 💬 联系我 Contact
-如有建议、问题或合作意向，欢迎联系：
-
-* 📧 Email: guolvaita@gmail.com
-
-* 💬 WeChat: AfterTheMoonlight
-  <br/>
-  <br/>
-  <br/>
-
 ## 🌟 Star 支持 Support Me
 如果你觉得这个项目对你有帮助，请不要吝啬点一个 🌟 Star，这是我持续优化的最大动力！
