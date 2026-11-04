@@ -1,0 +1,31 @@
+project:
+  name: MQTT-Macchiatto
+  version: '1.0.0'
+  description: An MQTT 3.1, 3.1.1, and 5 client for Java 25 and newer.
+  authors:
+    - rururunu
+  license: Apache-2.0
+  languages:
+    java:
+      groupId: io.github.rururunu
+      artifactId: MQTT-Macchiatto
+      version: '25'
+  links:
+    homepage: https://github.com/rururunu/MQTT-Macchiatto
+
+signing:
+  active: ALWAYS
+  pgp:
+    armored: true
+    mode: MEMORY
+
+deploy:
+  maven:
+    mavenCentral:
+      sonatype:
+        active: RELEASE
+        url: https://central.sonatype.com/api/v1/publisher
+        namespace: io.github.rururunu
+        applyMavenCentralRules: true
+        stagingRepositories:
+          - target/stage/maven/output
